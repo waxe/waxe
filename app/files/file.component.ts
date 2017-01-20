@@ -10,8 +10,12 @@ import { UrlService } from '../url.service';
   selector: 'waxe-file',
   template: `
   <ng-container [ngSwitch]="file.type">
-    <a [routerLink]="urlService.URLS.files.list" [queryParams]="{path: file.path}" *ngSwitchCase="'folder'">Folder {{file.name}}</a>
-    <a [routerLink]="urlService.URLS.files.view" [queryParams]="{path: file.path}" *ngSwitchCase="'file'">File {{file.name}}</a>
+    <a [routerLink]="urlService.URLS.files.list" [queryParams]="{path: file.path}" *ngSwitchCase="'folder'">
+      <i class="fa fa-folder-o"></i> {{file.name}}
+    </a>
+    <a [routerLink]="urlService.URLS.files.view" [queryParams]="{path: file.path}" *ngSwitchCase="'file'">
+      <i class="fa fa-file-o"></i> {{file.name}}
+    </a>
   </ng-container>
   `
 })
