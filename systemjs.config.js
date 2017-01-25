@@ -26,6 +26,13 @@
       // other libraries
       'rxjs':                      'npm:rxjs',
       // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
+      'ng2-ace-editor': 'npm:ng2-ace-editor',
+      'brace': 'npm:brace',
+      'w3c-blob': 'npm:w3c-blob',
+      'buffer': 'npm:buffer',
+      'base64-js': 'npm:base64-js',
+      'ieee754': 'npm:ieee754',
+      'isarray': 'npm:isarray',
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -35,7 +42,35 @@
       },
       rxjs: {
         defaultExtension: 'js'
-      }
+      },
+      'ng2-ace-editor': {
+        main: './ng2-ace-editor.js',
+        defaultExtension: 'js'
+      },
+      'brace': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
+      'w3c-blob': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
+      'buffer': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
+      'base64-js': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
+      'ieee754': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
+      'isarray': {
+        main: './index.js',
+        defaultExtension: 'js'
+      },
     }
   });
 })(this);

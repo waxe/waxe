@@ -15,6 +15,7 @@ const PATH = 'http://127.0.0.1:6543';
 export const API_URLS: any = {
   'files': {
       'list': `${PATH}/api/0/files`,
+      'source': `${PATH}/api/0/files/source`,
   },
 }
 

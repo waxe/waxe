@@ -18,3 +18,29 @@
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
 }
+
+
+html, body {
+  height: 100%;
+}
+
+waxe-app,
+router-outlet + ng-component,
+.flex {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+}
+
+.flex-1 {
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+
+/* Because of flex */
+.container-fluid {
+  width: 100%;
+}
