@@ -1,5 +1,20 @@
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
+.files a {
+  color: inherit;
+}
+
+.files .fa {
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.files .file {
+  margin-bottom: 5px;
+}
+
+.breadcrumb {
+  background: none;
+  border-radius: 0;
+  border-bottom: 1px solid #ddd;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }

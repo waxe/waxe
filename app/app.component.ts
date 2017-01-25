@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 
 @Component({
+  moduleId: module.id,
   selector: 'waxe-app',
-  template: `<h1>Hello {{name}}</h1><router-outlet></router-outlet>`,
+  templateUrl: './app.component.html',
 })
-export class AppComponent  { name = 'Angular'; }
+export class AppComponent {}
