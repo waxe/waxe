@@ -27,6 +27,7 @@
     "@angular/router": "~3.4.0",
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.18",
     "angular-in-memory-web-api": "~0.2.4",
+    "angular2-contextmenu": "^0.7.1",
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "ng2-ace-editor": "^0.1.4",

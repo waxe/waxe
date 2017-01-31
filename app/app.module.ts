@@ -5,6 +5,9 @@ import { CommonModule }      from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
+import { ContextMenuModule } from 'angular2-contextmenu';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { AppComponent }  from './app.component';
 
 import { FilesModule } from './files/files.module';
@@ -17,7 +20,10 @@ import { UrlService }  from './url.service';
     CommonModule,
     HttpModule,
     RouterModule,
-
+    ContextMenuModule.forRoot({
+      useBootstrap4: true,
+    }),
+    NgbModule.forRoot(),
     FilesModule,
   ],
   declarations: [

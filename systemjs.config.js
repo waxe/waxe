@@ -26,6 +26,7 @@
       // other libraries
       'rxjs':                      'npm:rxjs',
       // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
+      '@ng-bootstrap/ng-bootstrap': 'npm:@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
       'ng2-ace-editor': 'npm:ng2-ace-editor',
       'brace': 'npm:brace',
       'w3c-blob': 'npm:w3c-blob',
@@ -33,6 +34,8 @@
       'base64-js': 'npm:base64-js',
       'ieee754': 'npm:ieee754',
       'isarray': 'npm:isarray',
+
+      'angular2-contextmenu': 'npm:angular2-contextmenu',
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -71,6 +74,11 @@
         main: './index.js',
         defaultExtension: 'js'
       },
+      'angular2-contextmenu': {
+        main: './angular2-contextmenu.js',
+        defaultExtension: 'js'
+      },
+
     }
   });
 })(this);
