@@ -16,6 +16,8 @@ export const API_URLS: any = {
   'files': {
       'list': `${PATH}/api/0/files`,
       'source': `${PATH}/api/0/files/source`,
+      'folder': `${PATH}/api/0/files/folder`,
+      'rename': `${PATH}/api/0/files/rename`,
   },
 }
 
