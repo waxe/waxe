@@ -15,14 +15,22 @@ export class FileSelectionService {
 
   constructor(private http: Http, private urlService: UrlService) {}
 
-  reset() {
-    this.visible = false;
+  reset(): void {
     this.selected = [];
+    this.setVisible();
   }
 
-  toggleSelect(e: any, file: File) {
+  setVisible(): void {
+    this.visible = !!this.selected.length;
+  }
+
+  add(file: File): void {
+    this.selected.push(file);
+  }
+
+  toggleSelect(e: any, file: File): void {
     if (e.target.checked) {
-      this.selected.push(file);
+      this.add(file);
     }
     else {
       let index: number = this.selected.indexOf(file);
@@ -31,7 +39,7 @@ export class FileSelectionService {
       }
     }
 
-    this.visible = !!this.selected.length;
+    this.setVisible();
   }
 
 }

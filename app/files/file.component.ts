@@ -11,7 +11,7 @@ import { UrlService } from '../url.service';
   selector: 'waxe-file',
   template: `
   <span [ngSwitch]="file.type" (mouseenter)="visibleCheckbox=true" (mouseleave)="visibleCheckbox=false">
-    <input type="checkbox" [style.visibility]="(fileSelectionService.visible || visibleCheckbox)? 'visible': 'hidden'" (change)="fileSelectionService.toggleSelect($event, file)">
+    <input type="checkbox" [style.visibility]="(fileSelectionService.visible || visibleCheckbox)? 'visible': 'hidden'" [checked]="fileSelectionService.selected.indexOf(file) !== -1" (click)="fileSelectionService.toggleSelect($event, file)">
     <a [routerLink]="urlService.URLS.files.list" [queryParams]="{path: file.path}" *ngSwitchCase="'folder'">
       <i class="fa fa-folder-o"></i> {{file.name}}
     </a>

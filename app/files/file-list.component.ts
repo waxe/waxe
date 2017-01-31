@@ -48,10 +48,10 @@ import { Observable } from 'rxjs/Rx';
       Paste
     </template>
     <template contextMenuItem divider="true"></template>
-    <template contextMenuItem (execute)="inDevelopmentMsg('Select all');">
+    <template contextMenuItem (execute)="selectAll()">
       Select all
     </template>
-    <template contextMenuItem (execute)="inDevelopmentMsg('Deselect all');">
+    <template contextMenuItem [enabled]="isBulkActionEnableBound" (execute)="deSelectAll()">
       Deselect all
     </template>
     <template contextMenuItem divider="true"></template>
@@ -64,6 +64,7 @@ import { Observable } from 'rxjs/Rx';
 export class FileListComponent implements OnInit {
   @ViewChild(ContextMenuComponent) public fileMenu: ContextMenuComponent;
 
+  files: File[];
   columns: File[][];
   path: string;
   nbCols: number = 2;
@@ -80,6 +81,7 @@ export class FileListComponent implements OnInit {
 
   fetch(): void {
     this.fileService.getFiles(this.path).subscribe((files: File[]) => {
+        this.files = files;
         this.fileSelectionService.reset();
         let nbPerCol: number = Math.ceil(files.length / this.nbCols);
         this.columns = [];
@@ -147,5 +149,15 @@ export class FileListComponent implements OnInit {
     }
 
     this.fileService.remove(this.fileSelectionService.selected).subscribe(() => this.fetch());
+  }
+
+  selectAll(): void {
+    this.fileSelectionService.reset();
+    this.files.map((file:File) => this.fileSelectionService.add(file));
+    this.fileSelectionService.setVisible();
+  }
+
+  deSelectAll(): void {
+    this.fileSelectionService.reset();
   }
 }
