@@ -8,6 +8,7 @@ import { File, Folder } from './file';
 import { FileBufferService } from './file-buffer.service';
 import { FileSelectionService } from './file-selection.service';
 import { FileService } from './file.service';
+import { UrlService } from '../url.service';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 
@@ -32,7 +33,7 @@ import { Observable } from 'rxjs/Rx';
       New folder
     </template>
     <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
-    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="inDevelopmentMsg('Open');">
+    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="open($event.item)">
       Open
     </template>
     <template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
@@ -71,11 +72,13 @@ export class FileListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fileBufferService: FileBufferService,
     private fileService: FileService,
     private fileSelectionService: FileSelectionService,
     private modalService: NgbModal,
     private contextMenuService: ContextMenuService,
+    private urlService: UrlService,
   ) {}
 
 
@@ -122,6 +125,15 @@ export class FileListComponent implements OnInit {
 
   inDevelopmentMsg(msg: string) {
     alert(msg + ': Feature in development');
+  }
+
+  open(file: File): void {
+    if (file.type === 'folder') {
+      this.router.navigate([this.urlService.URLS.files.list], {queryParams: {path: file.path}});
+    }
+    else {
+      this.router.navigate([this.urlService.URLS.files.view], {queryParams: {path: file.path}});
+    }
   }
 
   createFolder(): void {
