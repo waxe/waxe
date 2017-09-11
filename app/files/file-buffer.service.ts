@@ -15,16 +15,26 @@ export class FileBufferService {
 
   constructor(private http: Http, private urlService: UrlService) {}
 
-  selectCopyFiles(files: File[]) {
+  reset(): void {
     this.copyFiles = [];
     this.cutFiles = [];
+  }
+
+  selectCopyFiles(files: File[]): void {
+    this.reset();
     files.map((file: File) => this.copyFiles.push(file));
   }
 
-  selectCutFiles(files: File[]) {
-    this.copyFiles = [];
-    this.cutFiles = [];
+  selectCutFiles(files: File[]): void {
+    this.reset();
     files.map((file: File) => this.cutFiles.push(file));
+  }
+
+  isEmpty(): boolean {
+    if (!this.copyFiles.length && !this.cutFiles.length) {
+      return true;
+    }
+    return false;
   }
 
 }

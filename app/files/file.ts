@@ -7,7 +7,6 @@ export class File {
     this.name = file['name'];
     this.path = file['path'];
   }
-
 }
 
 

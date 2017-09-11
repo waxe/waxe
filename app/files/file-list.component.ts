@@ -20,20 +20,21 @@ import { Observable } from 'rxjs/Rx';
   template: `
   <breadcrumb [path]="path"></breadcrumb>
   <div class="container-fluid flex" [contextMenu]="fileMenu" [contextMenuSubject]="{}">
-    <div class="row files">
+    <div class="row files" mouseSelection>
       <div *ngFor="let column of columns" class="col-sm-6 ">
         <div *ngFor="let file of column" class="file">
-          <waxe-file [contextMenu]="fileMenu" [contextMenuSubject]="file" [file]="file"></waxe-file>
+          <waxe-file [contextMenu]="fileMenu" [contextMenuSubject]="file" [file]="file" mouseSelectable></waxe-file>
         </div>
       </div>
     </div>
   </div>
+
   <context-menu>
     <template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFolder()">
       New folder
     </template>
     <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
-    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="open($event.item)">
+    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="fileService.open($event.item)">
       Open
     </template>
     <template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
@@ -85,7 +86,8 @@ export class FileListComponent implements OnInit {
   fetch(): void {
     this.fileService.getFiles(this.path).subscribe((files: File[]) => {
         this.files = files;
-        this.fileSelectionService.reset();
+        this.fileSelectionService.destroy();
+        this.fileSelectionService.files = files;
         let nbPerCol: number = Math.ceil(files.length / this.nbCols);
         this.columns = [];
         for (var i=0, len=files.length;  i<len; i+=nbPerCol) {
@@ -101,7 +103,6 @@ export class FileListComponent implements OnInit {
         return Observable.of(this.path);
       }).subscribe(() => this.fetch());
   }
-
 
   public isItemDefined(file: File) {
     // Returns true if the context menu is opened when clicking on a file
@@ -125,15 +126,6 @@ export class FileListComponent implements OnInit {
 
   inDevelopmentMsg(msg: string) {
     alert(msg + ': Feature in development');
-  }
-
-  open(file: File): void {
-    if (file.type === 'folder') {
-      this.router.navigate([this.urlService.URLS.files.list], {queryParams: {path: file.path}});
-    }
-    else {
-      this.router.navigate([this.urlService.URLS.files.view], {queryParams: {path: file.path}});
-    }
   }
 
   createFolder(): void {
@@ -164,12 +156,10 @@ export class FileListComponent implements OnInit {
   }
 
   selectAll(): void {
-    this.fileSelectionService.reset();
-    this.files.map((file:File) => this.fileSelectionService.add(file));
-    this.fileSelectionService.setVisible();
+    this.fileSelectionService.selectAll();
   }
 
   deSelectAll(): void {
-    this.fileSelectionService.reset();
+    this.fileSelectionService.deselectAll();
   }
 }

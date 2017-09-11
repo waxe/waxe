@@ -18,6 +18,8 @@ import { FileSelectionService } from './file-selection.service';
 import { FileService } from './file.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 
+import { MouseSelectionDirective, MouseSelectableDirective } from './file-mouse-selection.directive';
+
 
 const routes: Routes = [
   { path: '',  component: FileListComponent },
@@ -43,6 +45,9 @@ const routes: Routes = [
     FileListComponent,
     CreateFolderModalComponent,
     FileRenameModalComponent,
+
+    MouseSelectionDirective,
+    MouseSelectableDirective,
   ],
   providers: [
     FileBufferService,

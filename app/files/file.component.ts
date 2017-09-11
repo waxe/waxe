@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { File, Folder } from './file';
@@ -10,28 +10,37 @@ import { UrlService } from '../url.service';
   moduleId: module.id,
   selector: 'waxe-file',
   template: `
-  <span [ngSwitch]="file.type" (mouseenter)="visibleCheckbox=true" (mouseleave)="visibleCheckbox=false">
-    <input type="checkbox" [style.visibility]="(fileSelectionService.visible || visibleCheckbox)? 'visible': 'hidden'" [checked]="fileSelectionService.selected.indexOf(file) !== -1" (click)="fileSelectionService.toggleSelect($event, file)">
-    <a [routerLink]="urlService.URLS.files.list" [queryParams]="{path: file.path}" *ngSwitchCase="'folder'">
-      <i class="fa fa-folder-o"></i> {{file.name}}
-    </a>
-    <a [routerLink]="urlService.URLS.files.view" [queryParams]="{path: file.path}" *ngSwitchCase="'file'">
-      <i class="fa fa-file-o"></i> {{file.name}}
+  <span [ngSwitch]="file.type">
+    <a href="#" (click)="select(file, $event)" (dblclick)="fileService.open(file)" [class.selected]="fileSelectionService.shouldHighlight(file)">
+      <i class="fa fa-folder-o" *ngSwitchCase="'folder'"></i>
+      <i class="fa fa-file-o" *ngSwitchCase="'file'"></i>
+      {{file.name}}
     </a>
   </span>
   `
 })
-export class FileComponent implements OnInit {
+export class FileComponent {
 
-  @Input() file: File;
-  visibleCheckbox: boolean = false;
+  // We need to have it public to acces it in the mouse directive
+  @Input() public file: File;
 
-  constructor(private fileService: FileService, public urlService: UrlService, public fileSelectionService: FileSelectionService) {}
+  private preventClick: boolean = false;
+  private timer: any;
 
-  ngOnInit(): void {
+  constructor(private router: Router, private urlService: UrlService, public fileSelectionService: FileSelectionService, public fileService: FileService) {}
+
+
+  public select(file: File, event: MouseEvent): boolean {
+    if (event.shiftKey) {
+      this.fileSelectionService.selectUntil(file);
+    }
+    else if (event.ctrlKey) {
+      this.fileSelectionService.toggleSelect(file);
+    }
+    else {
+      this.fileSelectionService.select(file);
+    }
+    return false;
   }
 
-  toggleVisibility() {
-    this.visibleCheckbox = !this.visibleCheckbox;
-  }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, URLSearchParams, Response } from '@angular/http';
+import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Rx';
 
@@ -13,7 +14,7 @@ export class FileService {
   // TODO: use headers
   private headers = new Headers({'Content-Type': 'application/json'});
 
-  constructor(private http: Http, private urlService: UrlService) {}
+  constructor(private http: Http, private router: Router, private urlService: UrlService) {}
 
   getFiles(path: string=null): Observable<File[]> {
     let params: URLSearchParams = new URLSearchParams();
@@ -72,4 +73,29 @@ export class FileService {
       });
   }
 
+  copy(files: File[], path: string): Observable<{}> {
+    let data: string = JSON.stringify({
+      'path': files.map((file: File) => file.path),
+      'dst': path,
+    });
+    return this.http
+      .post(this.urlService.API_URLS.files.copy, data)
+      .map((res: Response) => res.json())
+      .catch((error: Response) => {
+        return Observable.throw(error.json())
+      });
+  }
+
+  move(files: File[], path: string) {
+
+  }
+
+  open(file: File): void {
+    if (file.type === 'folder') {
+      this.router.navigate([this.urlService.URLS.files.list], {queryParams: {path: file.path}});
+    }
+    else {
+      this.router.navigate([this.urlService.URLS.files.view], {queryParams: {path: file.path}});
+    }
+  }
 }

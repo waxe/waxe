@@ -1,5 +1,17 @@
+.files {
+  height: 100%;
+}
+
 .files a {
   color: inherit;
+}
+
+* {
+  // When making selection using mouse{down,move,up} avoid elements to be
+  // selectable.
+  /* TODO: do we need prefix ? */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .files .fa {
@@ -44,4 +56,15 @@ router-outlet + ng-component,
 /* Because of flex */
 .container-fluid {
   width: 100%;
+}
+
+a.selected {
+  background: #ccc;
+}
+
+.mouse-helper {
+  position: absolute;
+  border: 1px dashed red;
+  background: red;
+  opacity: 0.2;
 }
