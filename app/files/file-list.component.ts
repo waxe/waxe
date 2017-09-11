@@ -20,7 +20,7 @@ import { Observable } from 'rxjs/Rx';
   template: `
   <breadcrumb [path]="path"></breadcrumb>
   <div class="container-fluid flex" [contextMenu]="fileMenu" [contextMenuSubject]="{}">
-    <div class="row files" mouseSelection>
+    <div class="row files" [mouseSelection]="fileMenu">
       <div *ngFor="let column of columns" class="col-sm-6 ">
         <div *ngFor="let file of column" class="file">
           <waxe-file [contextMenu]="fileMenu" [contextMenuSubject]="file" [file]="file" mouseSelectable></waxe-file>

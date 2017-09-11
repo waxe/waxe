@@ -1,6 +1,8 @@
-import { ContentChildren, Directive, ElementRef, OnInit, QueryList, Renderer } from '@angular/core';
+import { ContentChildren, Directive, ElementRef, Input, OnInit, QueryList, Renderer } from '@angular/core';
 
 import { Observable } from 'rxjs/Rx';
+
+import { ContextMenuComponent } from 'angular2-contextmenu';
 
 import { FileComponent } from './file.component';
 import { FileSelectionService } from './file-selection.service';
@@ -26,6 +28,7 @@ export class MouseSelectableDirective {
 export class MouseSelectionDirective implements OnInit {
 
   @ContentChildren(MouseSelectableDirective) private selectables: QueryList<MouseSelectableDirective>;
+  @Input('mouseSelection') fileMenu: ContextMenuComponent;
 
   private startX: number;
   private startY: number;
@@ -117,6 +120,11 @@ export class MouseSelectionDirective implements OnInit {
     const body = document.querySelector('body');
 
     this.elementRef.nativeElement.addEventListener('mousedown', (event: any) => {
+
+      if (this.fileMenu) {
+        // Make sure the context menu we close the context menu.
+        this.fileMenu.hideMenu();
+      }
 
       if (event.which !== 1 || event.target.tagName.toLowerCase() === 'a') {
         // Avoid default behaviour of drag and drop
