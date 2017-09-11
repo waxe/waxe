@@ -50,7 +50,7 @@ export class FileService {
       });
   }
 
-  remove(files: File[]): Observable<{}> {
+  delete(files: File[]): Observable<{}> {
     let body: string = JSON.stringify({'path': files.map((file: File) => file.path)});
     return this.http
       .delete(this.urlService.API_URLS.files.list, {body: body, headers: this.headers})
@@ -87,7 +87,16 @@ export class FileService {
   }
 
   move(files: File[], path: string) {
-
+    let data: string = JSON.stringify({
+      'path': files.map((file: File) => file.path),
+      'dst': path,
+    });
+    return this.http
+      .post(this.urlService.API_URLS.files.move, data)
+      .map((res: Response) => res.json())
+      .catch((error: Response) => {
+        return Observable.throw(error.json())
+      });
   }
 
   open(file: File): void {

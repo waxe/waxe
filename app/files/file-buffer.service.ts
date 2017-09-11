@@ -1,40 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Http, URLSearchParams, Response } from '@angular/http';
 
-import { Observable } from 'rxjs';
-
-import { UrlService } from '../url.service';
 import { File } from './file';
 
 
 @Injectable()
 export class FileBufferService {
 
-  copyFiles: File[] = [];
-  cutFiles: File[] = [];
+  public files: File[] = [];
+  public cut: boolean;
 
-  constructor(private http: Http, private urlService: UrlService) {}
-
-  reset(): void {
-    this.copyFiles = [];
-    this.cutFiles = [];
+  public reset(): void {
+    this.files = [];
   }
 
-  selectCopyFiles(files: File[]): void {
-    this.reset();
-    files.map((file: File) => this.copyFiles.push(file));
+  public setFiles(files: File[]): void {
+    this.files = files.slice(0);
   }
 
-  selectCutFiles(files: File[]): void {
-    this.reset();
-    files.map((file: File) => this.cutFiles.push(file));
+  public setCopyFiles(files: File[]): void {
+    this.setFiles(files);
+    this.cut = false;
+  }
+
+  public setCutFiles(files: File[]): void {
+    this.setFiles(files);
+    this.cut = true;
   }
 
   isEmpty(): boolean {
-    if (!this.copyFiles.length && !this.cutFiles.length) {
-      return true;
-    }
-    return false;
+    return this.files.length === 0
   }
-
 }

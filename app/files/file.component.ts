@@ -17,18 +17,23 @@ import { UrlService } from '../url.service';
       {{file.name}}
     </a>
   </span>
-  `
+  `,
+  host: {'(contextmenu)': 'onContextMenu()'}
 })
 export class FileComponent {
 
   // We need to have it public to acces it in the mouse directive
   @Input() public file: File;
 
-  private preventClick: boolean = false;
-  private timer: any;
-
   constructor(private router: Router, private urlService: UrlService, public fileSelectionService: FileSelectionService, public fileService: FileService) {}
 
+  // TODO: we should move the 2 following functions on mouse selection directives.
+  public onContextMenu(): void {
+    // When opening the menu, if the current file is not selected we select it
+    if (!this.fileSelectionService.isSelected(this.file)) {
+      this.fileSelectionService.select(this.file);
+    }
+  }
 
   public select(file: File, event: MouseEvent): boolean {
     if (event.shiftKey) {

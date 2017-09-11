@@ -19,7 +19,7 @@ import { Observable } from 'rxjs/Rx';
   providers: [ContextMenuService],
   template: `
   <breadcrumb [path]="path"></breadcrumb>
-  <div class="container-fluid flex" [contextMenu]="fileMenu" [contextMenuSubject]="{}">
+  <div class="container-fluid flex" [contextMenu]="fileMenu" [contextMenuSubject]="{}" (contextmenu)="deSelectAll()">
     <div class="row files" [mouseSelection]="fileMenu">
       <div *ngFor="let column of columns" class="col-sm-6 ">
         <div *ngFor="let file of column" class="file">
@@ -34,30 +34,31 @@ import { Observable } from 'rxjs/Rx';
       New folder
     </template>
     <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
-    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="fileService.open($event.item)">
+    <template contextMenuItem let-item [visible]="isSimpleActionEnableBound" (execute)="fileService.open($event.item)">
       Open
     </template>
-    <template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
+    <template contextMenuItem [visible]="isSimpleActionEnableBound" (execute)="rename($event.item);">
       Rename
     </template>
-    <template contextMenuItem [enabled]="isBulkActionEnableBound" (execute)="inDevelopmentMsg('Copy');">
+    <template contextMenuItem [visible]="isSimpleActionEnableBound" divider="true"></template>
+    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="copy()">
       Copy
     </template>
-    <template contextMenuItem [enabled]="isBulkActionEnableBound" (execute)="inDevelopmentMsg('Cut');">
+    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="cut()">
       Cut
     </template>
-    <template contextMenuItem [visible]="isItemNotDefined" [enabled]="isPasteEnableBound" (execute)="inDevelopmentMsg('Paste');">
+    <template contextMenuItem [visible]="isPasteVisibleBound" [enabled]="isPasteEnableBound" (execute)="paste($event.item)">
       Paste
     </template>
-    <template contextMenuItem divider="true"></template>
-    <template contextMenuItem (execute)="selectAll()">
+    <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
+    <template contextMenuItem [visible]="isItemNotDefined" (execute)="selectAll()">
       Select all
     </template>
-    <template contextMenuItem [enabled]="isBulkActionEnableBound" (execute)="deSelectAll()">
+    <template contextMenuItem [visible]="isItemNotDefined" [enabled]="hasFileSelectedBound" (execute)="deSelectAll()">
       Deselect all
     </template>
-    <template contextMenuItem divider="true"></template>
-    <template contextMenuItem [enabled]="isBulkActionEnableBound" (execute)="remove($event.item)">
+    <template contextMenuItem divider="true" [visible]="isItemDefined"></template>
+    <template contextMenuItem [visible]="isItemDefined" (execute)="remove()">
       Delete
     </template>
   </context-menu>
@@ -66,7 +67,6 @@ import { Observable } from 'rxjs/Rx';
 export class FileListComponent implements OnInit {
   @ViewChild(ContextMenuComponent) public fileMenu: ContextMenuComponent;
 
-  files: File[];
   columns: File[][];
   path: string;
   nbCols: number = 2;
@@ -85,7 +85,6 @@ export class FileListComponent implements OnInit {
 
   fetch(): void {
     this.fileService.getFiles(this.path).subscribe((files: File[]) => {
-        this.files = files;
         this.fileSelectionService.destroy();
         this.fileSelectionService.files = files;
         let nbPerCol: number = Math.ceil(files.length / this.nbCols);
@@ -114,18 +113,24 @@ export class FileListComponent implements OnInit {
     return typeof file.name === 'undefined';
   }
 
-  public isBulkActionEnableBound = this.isBulkActionEnable.bind(this);
-  isBulkActionEnable(file: File) {
-    return (typeof file.name !== 'undefined') || this.fileSelectionService.selected.length;
+  public isSimpleActionEnableBound = this.isSimpleActionEnable.bind(this);
+  private isSimpleActionEnable(file: File) {
+    return this.isItemDefined(file) && this.fileSelectionService.selected.length === 1;
+  }
+
+  public hasFileSelectedBound = this.hasFileSelected.bind(this);
+  private hasFileSelected(file: File) {
+    return !!this.fileSelectionService.selected.length;
+  }
+
+  public isPasteVisibleBound = this.isPasteVisible.bind(this);
+  isPasteVisible(file: File) {
+    return ((file.name && file.type === 'folder') || !file.name)
   }
 
   public isPasteEnableBound = this.isPasteEnable.bind(this);
   isPasteEnable(file: File) {
-    return this.fileBufferService.copyFiles.length || this.fileBufferService.cutFiles.length;
-  }
-
-  inDevelopmentMsg(msg: string) {
-    alert(msg + ': Feature in development');
+    return !this.fileBufferService.isEmpty();
   }
 
   createFolder(): void {
@@ -137,22 +142,21 @@ export class FileListComponent implements OnInit {
   rename(file: File): void {
     const modalRef = this.modalService.open(FileRenameModalComponent);
     modalRef.componentInstance.file = file;
-    modalRef.result.then(() => this.fetch());
+    modalRef.result.then(() => {
+      this.fetch();
+      // Since we use the file path we can't copy/paste a renamed file
+      this.fileBufferService.reset();
+    });
   }
 
   remove(file: File): void {
-    // TODO: we should display a message when it's done
-    // We should also subscribe properly on error
-    if (typeof file.name !== 'undefined') {
-      this.fileService.remove([file]).subscribe(() => this.fetch());
-      return;
-    }
-    if (!this.fileSelectionService.selected.length) {
-      // TODO: display an error message
+    if (this.fileSelectionService.selected.length === 0) {
+      // Should never comes since the option is not displayed in the context
+      // menu if nothing is selected.
       return;
     }
 
-    this.fileService.remove(this.fileSelectionService.selected).subscribe(() => this.fetch());
+    this.fileService.delete(this.fileSelectionService.selected).subscribe(() => this.fetch());
   }
 
   selectAll(): void {
@@ -161,5 +165,32 @@ export class FileListComponent implements OnInit {
 
   deSelectAll(): void {
     this.fileSelectionService.deselectAll();
+  }
+
+  copy(): void {
+    this.fileBufferService.setCopyFiles(this.fileSelectionService.selected);
+  }
+
+  cut(): void {
+    this.fileBufferService.setCutFiles(this.fileSelectionService.selected);
+  }
+
+  paste(file: File): void {
+    if (this.fileBufferService.isEmpty()) {
+      // Should never comes since the option is not displayed in the context
+      // menu if nothing in the buffer.
+      return;
+    }
+    const dst: string = file.path? file.path: this.path;
+    if (this.fileBufferService.cut) {
+      this.fileService.move(this.fileBufferService.files, dst).subscribe((res: any) => {
+        this.fetch();
+      });
+    }
+    else {
+      this.fileService.copy(this.fileBufferService.files, dst).subscribe((res: any) => {
+        this.fetch();
+      });
+    }
   }
 }
