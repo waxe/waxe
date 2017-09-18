@@ -58,7 +58,7 @@ import { Observable } from 'rxjs/Rx';
       Deselect all
     </template>
     <template contextMenuItem divider="true" [visible]="isItemDefined"></template>
-    <template contextMenuItem [visible]="isItemDefined" (execute)="remove()">
+    <template contextMenuItem [visible]="isItemDefined" waxeConfirm (confirm)="remove()">
       Delete
     </template>
   </context-menu>

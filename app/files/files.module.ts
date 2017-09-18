@@ -8,6 +8,8 @@ import { AceEditorDirective } from 'ng2-ace-editor';
 import { ContextMenuModule } from 'angular2-contextmenu';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { ConfirmModule } from '../confirm/confirm.module';
+
 import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
@@ -36,6 +38,8 @@ const routes: Routes = [
 
     ContextMenuModule,
     NgbModule,
+
+    ConfirmModule,
   ],
   declarations: [
     AceEditorDirective,
