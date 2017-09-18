@@ -68,3 +68,19 @@ a.selected {
   background: red;
   opacity: 0.2;
 }
+
+
+waxe-messages {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+waxe-messages > div {
+  display: inline-block;
+}
+
+waxe-messages .close {
+  margin-left: 10px;
+  margin-right: -5px;
+}

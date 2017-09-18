@@ -13,6 +13,9 @@ import { AppComponent }  from './app.component';
 import { FilesModule } from './files/files.module';
 import { UrlService }  from './url.service';
 
+import { MessagesComponent } from './messages/messages.component';
+import { MessagesServive } from './messages/messages.service';
+
 
 @NgModule({
   imports: [
@@ -28,9 +31,11 @@ import { UrlService }  from './url.service';
   ],
   declarations: [
     AppComponent,
+    MessagesComponent,
   ],
   providers: [
-    UrlService
+    UrlService,
+    MessagesServive,
   ],
   bootstrap: [ AppComponent ]
 })
