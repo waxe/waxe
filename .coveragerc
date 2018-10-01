@@ -1,0 +1,3 @@
+[run]
+source = waxe
+omit = waxe/test*
