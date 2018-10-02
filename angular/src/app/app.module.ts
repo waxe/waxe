@@ -1,16 +1,42 @@
+import './rxjs-extensions';
+import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { CommonModule }      from '@angular/common';
+import { HttpModule } from '@angular/http';
+import { RouterModule } from '@angular/router';
 
-import { AppComponent } from './app.component';
+import { ContextMenuModule } from 'angular2-contextmenu';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { AppComponent }  from './app.component';
+
+import { FilesModule } from './files/files.module';
+import { UrlService }  from './url.service';
+
+import { MessagesComponent } from './messages/messages.component';
+import { MessagesServive } from './messages/messages.service';
+
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    CommonModule,
+    HttpModule,
+    RouterModule,
+    ContextMenuModule.forRoot({
+      useBootstrap4: true,
+    }),
+    NgbModule.forRoot(),
+    FilesModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    MessagesComponent,
+  ],
+  providers: [
+    UrlService,
+    MessagesServive,
+  ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

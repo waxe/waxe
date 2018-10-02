@@ -1,31 +1,33 @@
-import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
-describe('AppComponent', () => {
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By }           from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
+
+describe('AppComponent', function () {
+  let de: DebugElement;
+  let comp: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
+      declarations: [ AppComponent ]
+    })
+    .compileComponents();
   }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    comp = fixture.componentInstance;
+    de = fixture.debugElement.query(By.css('h1'));
   });
 
-  it(`should have as title 'angular'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('angular');
-  });
+  it('should create component', () => expect(comp).toBeDefined() );
 
-  it('should render title in a h1 tag', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  it('should have expected <h1> text', () => {
     fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to angular!');
+    const h1 = de.nativeElement;
+    expect(h1.innerText).toMatch(/angular/i,
+      '<h1> should say something about "Angular"');
   });
 });
