@@ -5,7 +5,6 @@ import { FileService } from './file.service';
 
 
 @Component({
-  moduleId: module.id,
   template: `
   <breadcrumb [path]="path"></breadcrumb>
   <div ace-editor style="min-height: 200px; width:100%; overflow: auto;" class="flex-1"

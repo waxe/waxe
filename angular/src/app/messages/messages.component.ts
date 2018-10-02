@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
-  moduleId: module.id,
   selector: 'waxe-messages',
   template: `
     <div>

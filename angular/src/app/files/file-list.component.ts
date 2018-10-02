@@ -15,7 +15,6 @@ import { FileRenameModalComponent } from './file-rename-modal.component';
 import { Observable } from 'rxjs/Rx';
 
 @Component({
-  moduleId: module.id,
   providers: [ContextMenuService],
   template: `
   <breadcrumb [path]="path"></breadcrumb>

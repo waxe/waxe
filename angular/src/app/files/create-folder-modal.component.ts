@@ -7,7 +7,6 @@ import { FileService } from './file.service';
 
 
 @Component({
-  moduleId: module.id,
   template: `
     <div class="modal-header">
       <h4 class="modal-title">New folder</h4>

@@ -28,7 +28,6 @@ export class ConfirmDirective {
 
 
 @Component({
-  moduleId: module.id,
   template: `
     <div class="modal-header">
       <h4 class="modal-title">Confirm</h4>

@@ -7,7 +7,6 @@ import { FileService } from './file.service';
 import { UrlService } from '../url.service';
 
 @Component({
-  moduleId: module.id,
   selector: 'waxe-file',
   template: `
   <span [ngSwitch]="file.type">

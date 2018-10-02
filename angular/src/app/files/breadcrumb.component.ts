@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  moduleId: module.id,
   selector: 'breadcrumb',
   template: `
   <nav class="breadcrumb">
