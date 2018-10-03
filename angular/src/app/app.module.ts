@@ -5,7 +5,7 @@ import { CommonModule }      from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
-import { ContextMenuModule } from 'angular2-contextmenu';
+import { ContextMenuModule } from 'ngx-contextmenu';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent }  from './app.component';

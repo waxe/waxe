@@ -2,7 +2,7 @@ import { ContentChildren, Directive, ElementRef, Input, OnInit, QueryList, Rende
 
 import { Observable } from 'rxjs/Rx';
 
-import { ContextMenuComponent } from 'angular2-contextmenu';
+import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 
 import { FileComponent } from './file.component';
 import { FileSelectionService } from './file-selection.service';
@@ -41,7 +41,7 @@ export class MouseSelectionDirective implements OnInit {
   private mouseUpListener: Function;
 
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer, private fileSelectionService: FileSelectionService) {}
+  constructor(private elementRef: ElementRef, private renderer: Renderer, private contextMenuService: ContextMenuService, private fileSelectionService: FileSelectionService) {}
 
   ngOnInit() {
     this.initMouseEvent();
@@ -122,8 +122,8 @@ export class MouseSelectionDirective implements OnInit {
     this.elementRef.nativeElement.addEventListener('mousedown', (event: any) => {
 
       if (this.fileMenu) {
-        // Make sure the context menu we close the context menu.
-        this.fileMenu.hideMenu();
+        // Make sure we close the context menu.
+        this.contextMenuService.closeAllContextMenus({eventType: 'cancel', event});
       }
 
       if (event.which !== 1 || event.target.tagName.toLowerCase() === 'a') {

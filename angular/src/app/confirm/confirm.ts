@@ -36,8 +36,8 @@ export class ConfirmDirective {
       </button>
     </div>
     <div class="modal-body">
-      <template [ngIf]="body">{{body}}</template>
-      <template [ngIf]="!body">Are you sure?</template>
+      <ng-template [ngIf]="body">{{body}}</ng-template>
+      <ng-template [ngIf]="!body">Are you sure?</ng-template>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss()">Cancel</button>

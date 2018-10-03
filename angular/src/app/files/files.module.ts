@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AceEditorDirective } from 'ng2-ace-editor';
-import { ContextMenuModule } from 'angular2-contextmenu';
+import { ContextMenuModule } from 'ngx-contextmenu';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmModule } from '../confirm/confirm.module';

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
-import { ContextMenuComponent, ContextMenuService } from 'angular2-contextmenu';
+import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { File, Folder } from './file';
@@ -29,37 +29,37 @@ import { Observable } from 'rxjs/Rx';
   </div>
 
   <context-menu>
-    <template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFolder()">
+    <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFolder()">
       New folder
-    </template>
-    <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
-    <template contextMenuItem let-item [visible]="isSimpleActionEnableBound" (execute)="fileService.open($event.item)">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
+    <ng-template contextMenuItem let-item [visible]="isSimpleActionEnableBound" (execute)="fileService.open($event.item)">
       Open
-    </template>
-    <template contextMenuItem [visible]="isSimpleActionEnableBound" (execute)="rename($event.item);">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isSimpleActionEnableBound" (execute)="rename($event.item);">
       Rename
-    </template>
-    <template contextMenuItem [visible]="isSimpleActionEnableBound" divider="true"></template>
-    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="copy()">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isSimpleActionEnableBound" divider="true"></ng-template>
+    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="copy()">
       Copy
-    </template>
-    <template contextMenuItem let-item [visible]="isItemDefined" (execute)="cut()">
+    </ng-template>
+    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="cut()">
       Cut
-    </template>
-    <template contextMenuItem [visible]="isPasteVisibleBound" [enabled]="isPasteEnableBound" (execute)="paste($event.item)">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isPasteVisibleBound" [enabled]="isPasteEnableBound" (execute)="paste($event.item)">
       Paste
-    </template>
-    <template contextMenuItem [visible]="isItemNotDefined" divider="true"></template>
-    <template contextMenuItem [visible]="isItemNotDefined" (execute)="selectAll()">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
+    <ng-template contextMenuItem [visible]="isItemNotDefined" (execute)="selectAll()">
       Select all
-    </template>
-    <template contextMenuItem [visible]="isItemNotDefined" [enabled]="hasFileSelectedBound" (execute)="deSelectAll()">
+    </ng-template>
+    <ng-template contextMenuItem [visible]="isItemNotDefined" [enabled]="hasFileSelectedBound" (execute)="deSelectAll()">
       Deselect all
-    </template>
-    <template contextMenuItem divider="true" [visible]="isItemDefined"></template>
-    <template contextMenuItem [visible]="isItemDefined" waxeConfirm (confirm)="remove()">
+    </ng-template>
+    <ng-template contextMenuItem divider="true" [visible]="isItemDefined"></ng-template>
+    <ng-template contextMenuItem [visible]="isItemDefined" waxeConfirm (confirm)="remove()">
       Delete
-    </template>
+    </ng-template>
   </context-menu>
   `
 })
