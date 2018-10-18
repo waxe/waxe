@@ -44,12 +44,13 @@ router-outlet + ng-component,
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
-  height: 100%;
+  height: calc(~"100% - 10px");
 }
 
 .flex-1 {
   -webkit-flex: 1;
   flex: 1;
+  display: flex;
 }
 
 
@@ -84,3 +85,23 @@ waxe-messages .close {
   margin-left: 10px;
   margin-right: -5px;
 }
+
+/* editor */
+.editor-container {
+  min-height: 200px;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  flex: 1;
+}
+
+.ace_scroller {
+  display: flex;
+  flex: 1;
+}
+
+.ace_content {
+  flex: 1;
+}
+
+/* end editor */

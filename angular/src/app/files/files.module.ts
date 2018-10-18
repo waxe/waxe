@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AceEditorDirective } from 'ng2-ace-editor';
+import { AceEditorModule } from 'ng2-ace-editor';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -38,11 +38,11 @@ const routes: Routes = [
 
     ContextMenuModule,
     NgbModule,
+    AceEditorModule,
 
     ConfirmModule,
   ],
   declarations: [
-    AceEditorDirective,
     BreadcrumbComponent,
     FileComponent,
     FileEditorComponent,

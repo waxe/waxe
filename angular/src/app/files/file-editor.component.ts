@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+
+import 'brace/theme/chrome';
+
 
 import { FileService } from './file.service';
 
@@ -7,13 +10,18 @@ import { FileService } from './file.service';
 @Component({
   template: `
   <breadcrumb [path]="path"></breadcrumb>
-  <div ace-editor style="min-height: 200px; width:100%; overflow: auto;" class="flex-1"
-       [text]="text" [readOnly]="true" [theme]="'chrome'"></div>
+  <ace-editor #editor class="editor-container" [text]="text" [readOnly]="true"
+              [theme]="'chrome'" [options]="options" mode="text"></ace-editor>
   `
 })
 export class FileEditorComponent implements OnInit {
+  @ViewChild('editor') editor;
+
   path: string;
-  text:string = "Hello world";
+  text: string ;
+  options: {} = {
+    wrap: true,
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -29,5 +37,10 @@ export class FileEditorComponent implements OnInit {
       .subscribe((source: string) => {
         this.text = source;
       });
+  }
+
+  ngAfterViewInit() {
+    // Hack to have the good height on the editor
+    this.editor.getEditor().resize();
   }
 }

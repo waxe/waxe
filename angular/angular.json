@@ -30,7 +30,10 @@
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "src/styles.less"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/ace-builds/src-min/ace.js",
+              "node_modules/ace-builds/src-min/theme-chrome.js"
+            ]
           },
           "configurations": {
             "production": {
