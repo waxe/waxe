@@ -11,8 +11,8 @@ import { UrlService } from '../url.service';
   template: `
   <span [ngSwitch]="file.type">
     <a href="#" (click)="select(file, $event)" (dblclick)="fileService.open(file)" [class.selected]="fileSelectionService.shouldHighlight(file)">
-      <i class="fa fa-folder-o" *ngSwitchCase="'folder'"></i>
-      <i class="fa fa-file-o" *ngSwitchCase="'file'"></i>
+      <i class="far fa-folder" *ngSwitchCase="'folder'"></i>
+      <i class="far fa-file" *ngSwitchCase="'file'"></i>
       {{file.name}}
     </a>
   </span>
