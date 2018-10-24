@@ -42,6 +42,9 @@ def absolute_path(root_path, relpath):
     if not abspath.startswith(root_path):
         # Forbidden path
         raise IOError("%s doesn't exist" % relpath)
+    # NOTE: symlinks are not supported
+    if not (os.path.isfile(abspath) or os.path.isdir(abspath)):
+        raise IOError("%s doesn't exist" % relpath)
     return abspath
 
 

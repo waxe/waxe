@@ -50,17 +50,25 @@ class TestFiles(unittest.TestCase):
 
     def test_absolute_path(self):
         root_path = ROOT_PATH
-        relpath = 'folder1'
+        relpath = 'dir1'
         abspath = absolute_path(root_path, relpath)
-        self.assertEqual(abspath, os.path.join(root_path, 'folder1'))
+        self.assertEqual(abspath, os.path.join(root_path, 'dir1'))
 
         relpath = ''
         abspath = absolute_path(root_path, relpath)
         self.assertEqual(abspath, root_path)
 
-        relpath = 'folder1/file.xml'
+        relpath = 'dir1/sub1/sub1.txt'
         abspath = absolute_path(root_path, relpath)
-        self.assertEqual(abspath, os.path.join(root_path, 'folder1/file.xml'))
+        self.assertEqual(abspath,
+                         os.path.join(root_path, 'dir1/sub1/sub1.txt'))
+
+        relpath = 'folder1'
+        try:
+            absolute_path(root_path, relpath)
+            assert(False)
+        except IOError, e:
+            self.assertEqual(str(e), "folder1 doesn't exist")
 
         relpath = '/folder1/file.xml'
         try:
