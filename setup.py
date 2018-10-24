@@ -23,6 +23,8 @@ tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',  # includes virtualenv
     'pytest-cov',
+    'nose',
+    'mock',
     ]
 
 setup(name='waxe',
@@ -45,6 +47,7 @@ setup(name='waxe',
       extras_require={
           'testing': tests_require,
       },
+      test_suite='nose.collector',
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]
