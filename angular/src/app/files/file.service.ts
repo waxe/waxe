@@ -37,6 +37,18 @@ export class FileService {
   }
 
 
+  update(path: string, source: string): Observable<string> {
+    let data: string = JSON.stringify({
+      'path': path,
+      'source': source,
+    });
+
+    return this.http
+      .put(this.urlService.API_URLS.files.list, data)
+      .map((res: Response) => res.json());
+  }
+
+
   createFolder(path: string, name: string): Observable<{}> {
     let data: string = JSON.stringify({
       'path': path,

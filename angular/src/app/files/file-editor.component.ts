@@ -5,12 +5,15 @@ import 'brace/theme/chrome';
 
 
 import { FileService } from './file.service';
+import { MessagesServive } from '../messages/messages.service';
 
 
 @Component({
   template: `
   <breadcrumb [path]="path"></breadcrumb>
-  <ace-editor #editor class="editor-container" [text]="text" [readOnly]="true"
+  <ace-editor #editor class="editor-container" [text]="text"
+              [durationBeforeCallback]="1000"
+              (textChanged)="onChange($event)"
               [theme]="'chrome'" [options]="options" mode="text"></ace-editor>
   `
 })
@@ -26,13 +29,14 @@ export class FileEditorComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private fileService: FileService,
+    private messagesService: MessagesServive
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams
       .switchMap((params: Params) => {
         this.path = params['path'];
-        return this.fileService.getSource(params['path'])
+        return this.fileService.getSource(params['path']);
       })
       .subscribe((source: string) => {
         this.text = source;
@@ -43,4 +47,17 @@ export class FileEditorComponent implements OnInit {
     // Hack to have the good height on the editor
     this.editor.getEditor().resize();
   }
+
+  onChange(code) {
+    // NOTE: onChange is triggered on load, don't update if nothing has changed.
+    if (this.text !== code) {
+      this.fileService.update(this.path, code).subscribe(() => {
+        this.messagesService.add({
+          type: 'success',
+          txt: 'Saved!',
+        });
+      });
+    }
+  }
+
 }
