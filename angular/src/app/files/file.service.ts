@@ -62,6 +62,19 @@ export class FileService {
       });
   }
 
+  createFile(path: string, name: string): Observable<{}> {
+    let data: string = JSON.stringify({
+      'path': path,
+      'name': name,
+    });
+    return this.http
+      .post(this.urlService.API_URLS.files.list, data)
+      .map((res: Response) => res.json())
+      .catch((error: Response) => {
+        return Observable.throw(error.json());
+      });
+  }
+
   delete(files: File[]): Observable<{}> {
     let body: string = JSON.stringify({'path': files.map((file: File) => file.path)});
     return this.http

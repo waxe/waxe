@@ -9,6 +9,7 @@ import { FileBufferService } from './file-buffer.service';
 import { FileSelectionService } from './file-selection.service';
 import { FileService } from './file.service';
 import { UrlService } from '../url.service';
+import { CreateFileModalComponent } from './create-file-modal.component';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 
@@ -31,6 +32,9 @@ import { Observable } from 'rxjs/Rx';
   <context-menu>
     <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFolder()">
       New folder
+    </ng-template>
+    <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFile()">
+      New file
     </ng-template>
     <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
     <ng-template contextMenuItem let-item [visible]="isSimpleActionEnableBound" (execute)="fileService.open($event.item)">
@@ -135,6 +139,13 @@ export class FileListComponent implements OnInit {
   createFolder(): void {
     const modalRef = this.modalService.open(CreateFolderModalComponent);
     modalRef.componentInstance.path = this.path;
+    modalRef.result.then(() => this.fetch());
+  }
+
+  createFile(): void {
+    const modalRef = this.modalService.open(CreateFileModalComponent);
+    modalRef.componentInstance.path = this.path;
+    // TODO: open the created file?
     modalRef.result.then(() => this.fetch());
   }
 

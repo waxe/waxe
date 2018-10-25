@@ -14,6 +14,7 @@ import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
 import { FileListComponent } from './file-list.component';
+import { CreateFileModalComponent } from './create-file-modal.component';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 import { FileSelectionService } from './file-selection.service';
@@ -47,6 +48,7 @@ const routes: Routes = [
     FileComponent,
     FileEditorComponent,
     FileListComponent,
+    CreateFileModalComponent,
     CreateFolderModalComponent,
     FileRenameModalComponent,
 
@@ -59,6 +61,7 @@ const routes: Routes = [
     FileService,
   ],
   entryComponents: [
+    CreateFileModalComponent,
     CreateFolderModalComponent,
     FileRenameModalComponent,
   ]
