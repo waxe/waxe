@@ -32,7 +32,7 @@ import { FileService } from './file.service';
 export class FileRenameModalComponent {
   private _file: File;
   name: string;
-  formErrors: {} = {};
+  formErrors: any = {};
 
   @Input()
   set file(file: File) {

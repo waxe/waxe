@@ -31,7 +31,7 @@ import { FileService } from './file.service';
 })
 export class CreateFolderModalComponent {
   name: string;
-  formErrors: {} = {};
+  formErrors: any = {};
 
   @Input() path: string;
 

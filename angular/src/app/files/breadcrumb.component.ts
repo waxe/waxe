@@ -9,7 +9,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class BreadcrumbComponent {
 
-  private paths: {}[];
+  public paths: {}[];
 
   @Input()
   set path(path: string) {

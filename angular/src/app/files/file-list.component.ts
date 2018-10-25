@@ -30,17 +30,17 @@ import { Observable } from 'rxjs/Rx';
   </div>
 
   <context-menu>
-    <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFolder()">
+    <ng-template contextMenuItem let-item [visible]="isItemNotDefinedBound" (execute)="createFolder()">
       New folder
     </ng-template>
-    <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFile()">
+    <ng-template contextMenuItem let-item [visible]="isItemNotDefinedBound" (execute)="createFile()">
       New file
     </ng-template>
     <ng-template contextMenuItem [visible]="false" divider="true"></ng-template>
-    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="fileService.open($event.item)">
+    <ng-template contextMenuItem let-item [visible]="isItemDefinedBound" (execute)="fileService.open($event.item)">
       Open
     </ng-template>
-    <ng-template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
+    <ng-template contextMenuItem [visible]="isItemDefinedBound" (execute)="rename($event.item);">
       Rename
     </ng-template>
     <ng-template contextMenuItem [visible]="false" divider="true"></ng-template>
@@ -78,7 +78,7 @@ export class FileListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private fileBufferService: FileBufferService,
-    private fileService: FileService,
+    public fileService: FileService,
     private fileSelectionService: FileSelectionService,
     private modalService: NgbModal,
     private contextMenuService: ContextMenuService,
@@ -106,12 +106,14 @@ export class FileListComponent implements OnInit {
       }).subscribe(() => this.fetch());
   }
 
-  public isItemDefined(file: File) {
+  public isItemDefinedBound = this.isItemDefined.bind(this);
+  private isItemDefined(file: File) {
     // Returns true if the context menu is opened when clicking on a file
     return typeof file.name !== 'undefined';
   }
 
-  public isItemNotDefined(file: File) {
+  public isItemNotDefinedBound = this.isItemNotDefined.bind(this);
+  private isItemNotDefined(file: File) {
     // Returns true if the context menu is opened when clicking everywhere but not on a file
     return typeof file.name === 'undefined';
   }
@@ -159,7 +161,7 @@ export class FileListComponent implements OnInit {
     });
   }
 
-  remove(file: File): void {
+  remove(): void {
     if (this.fileSelectionService.selected.length === 0) {
       // Should never comes since the option is not displayed in the context
       // menu if nothing is selected.

@@ -31,7 +31,7 @@ import { FileService } from './file.service';
 })
 export class CreateFileModalComponent {
   name: string;
-  formErrors: {} = {};
+  formErrors: any = {};
 
   @Input() path: string;
 
