@@ -37,10 +37,10 @@ import { Observable } from 'rxjs/Rx';
       New file
     </ng-template>
     <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
-    <ng-template contextMenuItem let-item [visible]="isSimpleActionEnableBound" (execute)="fileService.open($event.item)">
+    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="fileService.open($event.item)">
       Open
     </ng-template>
-    <ng-template contextMenuItem [visible]="isSimpleActionEnableBound" (execute)="rename($event.item);">
+    <ng-template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
       Rename
     </ng-template>
     <ng-template contextMenuItem [visible]="isSimpleActionEnableBound" divider="true"></ng-template>
