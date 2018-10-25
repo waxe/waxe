@@ -36,32 +36,32 @@ import { Observable } from 'rxjs/Rx';
     <ng-template contextMenuItem let-item [visible]="isItemNotDefined" (execute)="createFile()">
       New file
     </ng-template>
-    <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
+    <ng-template contextMenuItem [visible]="false" divider="true"></ng-template>
     <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="fileService.open($event.item)">
       Open
     </ng-template>
     <ng-template contextMenuItem [visible]="isItemDefined" (execute)="rename($event.item);">
       Rename
     </ng-template>
-    <ng-template contextMenuItem [visible]="isSimpleActionEnableBound" divider="true"></ng-template>
-    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="copy()">
+    <ng-template contextMenuItem [visible]="false" divider="true"></ng-template>
+    <ng-template contextMenuItem let-item [visible]="false" (execute)="copy()">
       Copy
     </ng-template>
-    <ng-template contextMenuItem let-item [visible]="isItemDefined" (execute)="cut()">
+    <ng-template contextMenuItem let-item [visible]="false" (execute)="cut()">
       Cut
     </ng-template>
-    <ng-template contextMenuItem [visible]="isPasteVisibleBound" [enabled]="isPasteEnableBound" (execute)="paste($event.item)">
+    <ng-template contextMenuItem [visible]="false" [enabled]="isPasteEnableBound" (execute)="paste($event.item)">
       Paste
     </ng-template>
-    <ng-template contextMenuItem [visible]="isItemNotDefined" divider="true"></ng-template>
-    <ng-template contextMenuItem [visible]="isItemNotDefined" (execute)="selectAll()">
+    <ng-template contextMenuItem [visible]="false" divider="true"></ng-template>
+    <ng-template contextMenuItem [visible]="false" (execute)="selectAll()">
       Select all
     </ng-template>
-    <ng-template contextMenuItem [visible]="isItemNotDefined" [enabled]="hasFileSelectedBound" (execute)="deSelectAll()">
+    <ng-template contextMenuItem [visible]="false" [enabled]="hasFileSelectedBound" (execute)="deSelectAll()">
       Deselect all
     </ng-template>
-    <ng-template contextMenuItem divider="true" [visible]="isItemDefined"></ng-template>
-    <ng-template contextMenuItem [visible]="isItemDefined" waxeConfirm (confirm)="remove()">
+    <ng-template contextMenuItem divider="true" [visible]="false"></ng-template>
+    <ng-template contextMenuItem [visible]="false" waxeConfirm (confirm)="remove()">
       Delete
     </ng-template>
   </context-menu>
