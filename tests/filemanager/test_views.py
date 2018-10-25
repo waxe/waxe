@@ -148,10 +148,14 @@ class TestFilesPostView(unittest.TestCase):
 
         request = testing.DummyRequest(json_body={'name': 'newfile.txt'})
         view = FilesPostView(request)
-        res = view.create()
-        self.assertEqual(request.response.status_code, 400)
-        expected = {'errors': {'source': 'File content is required'}}
-        self.assertEqual(res, expected)
+        with patch('__builtin__.open', mock_open()) as m:
+            res = view.create()
+            self.assertEqual(request.response.status_code, 200)
+            self.assertEqual(res, {})
+            m.assert_called_once_with(
+                os.path.join(ROOT_PATH, 'newfile.txt'), 'w')
+            handle = m()
+            handle.write.assert_called_once_with('')
 
         request = testing.DummyRequest(json_body={
             'name': 'newfile.txt',

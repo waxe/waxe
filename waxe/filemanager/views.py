@@ -99,7 +99,7 @@ class FilesPostView(BaseView):
         except IOError:
             raise exc.HTTPNotFound()
 
-    @view_config(route_name='update', request_method='PUT')
+    @view_config(route_name='files', request_method='PUT')
     def update(self):
         if not os.path.isfile(self.abspath):
             raise exc.HTTPNotFound()
@@ -114,7 +114,7 @@ class FilesPostView(BaseView):
 
         return {}
 
-    @view_config(route_name='create', request_method='POST')
+    @view_config(route_name='files', request_method='POST')
     def create(self):
         name = self.request.json_body.get('name')
 
@@ -127,11 +127,7 @@ class FilesPostView(BaseView):
             self.request.response.status = 409
             return {'errors': {'name': "File '%s' already exists" % name}}
 
-        source = self.request.json_body.get('source')
-
-        if source is None:
-            self.request.response.status = 400
-            return {'errors': {'source': 'File content is required'}}
+        source = self.request.json_body.get('source') or ''
 
         with open(abspath, 'w') as f:
             f.write(source.encode('utf-8'))
@@ -200,9 +196,7 @@ class FilesPostView(BaseView):
 
 
 def includeme(config):
-    config.add_route('create', '/api/0/files')
     config.add_route('files', '/api/0/files')
-    config.add_route('update', '/api/0/files')
     config.add_route('source', '/api/0/files/source')
     config.add_route('rename', '/api/0/files/rename')
     config.add_route('create_folder', '/api/0/files/folder')
