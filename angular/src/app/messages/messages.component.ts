@@ -24,7 +24,14 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.sub = this.messagesService.message.subscribe((message: IMessage) => this.messages.push(message));
+    this.sub = this.messagesService.message.subscribe((message: IMessage) => {
+      this.messages = [];
+      this.messages.push(message);
+
+      setTimeout(() => {
+        this.messages = [];
+      }, 2000);
+    });
   }
 
   ngOnDestroy () {
