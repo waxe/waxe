@@ -1,6 +1,9 @@
 <nav class="navbar navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Waxe</a>
+    <span class="navbar-text" *ngIf="urlService.previewUrl && fileService.currentPath">
+      <a [href]="urlService.previewUrl + fileService.currentPath" target="_preview">Preview</a>
+    </span>
   </div>
 </nav>
 <waxe-messages></waxe-messages>

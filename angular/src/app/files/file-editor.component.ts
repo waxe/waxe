@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import 'brace/theme/chrome';
@@ -39,6 +39,7 @@ export class FileEditorComponent implements OnInit {
         return this.fileService.getSource(params['path']);
       })
       .subscribe((source: string) => {
+        this.fileService.currentPath = this.path;
         this.text = source;
       });
   }
@@ -58,6 +59,10 @@ export class FileEditorComponent implements OnInit {
         });
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.fileService.currentPath = null;
   }
 
 }

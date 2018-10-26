@@ -6,7 +6,7 @@ export const URLS: any = {
     'list': '',
     'view': '/edit/txt',
   }
-}
+};
 
 
 // Development path
@@ -21,11 +21,13 @@ export const API_URLS: any = {
       'copy': `${PATH}/api/0/files/copy`,
       'move': `${PATH}/api/0/files/move`,
   },
-}
+};
 
 
 @Injectable()
 export class UrlService {
   URLS: any = URLS;
   API_URLS: any = API_URLS;
+
+  previewUrl: string;
 }

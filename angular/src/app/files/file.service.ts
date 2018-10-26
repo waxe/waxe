@@ -14,6 +14,9 @@ export class FileService {
   // TODO: use headers
   private headers = new Headers({'Content-Type': 'application/json'});
 
+  // This is used in the file editor to have the preview button.
+  public currentPath: string;
+
   constructor(private http: Http, private router: Router, private urlService: UrlService) {}
 
   getFiles(path: string=null): Observable<File[]> {
