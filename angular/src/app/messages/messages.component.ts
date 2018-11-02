@@ -1,7 +1,5 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
 import { IMessage, MessagesServive } from './messages.service';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -10,37 +8,27 @@ import { Subscription } from 'rxjs/Subscription';
   selector: 'waxe-messages',
   template: `
     <div>
-      <ngb-alert [type]="message.type" *ngFor="let message of messages" (close)="removeMessage(message)">{{message.txt}}</ngb-alert>
+      <ngb-alert [type]="message.type" *ngFor="let message of messages"
+        (close)="messagesService.remove(message)">{{message.txt}}</ngb-alert>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessagesComponent implements OnInit, OnDestroy {
 
   public messages: IMessage[] = [];
   private sub: Subscription;
 
-
-  constructor(private messagesService: MessagesServive) {}
-
+  constructor(private ref: ChangeDetectorRef, private messagesService: MessagesServive) {}
 
   ngOnInit() {
-    this.sub = this.messagesService.message.subscribe((message: IMessage) => {
-      this.messages = [];
-      this.messages.push(message);
-
-      setTimeout(() => {
-        this.messages = [];
-      }, 2000);
+    this.sub = this.messagesService.messages.subscribe((res) => {
+      this.messages = res;
+      this.ref.detectChanges();
     });
   }
 
   ngOnDestroy () {
     this.sub.unsubscribe();
   }
-
-  public removeMessage(message: IMessage) {
-    const index: number = this.messages.indexOf(message);
-    this.messages.splice(index, 1);
-  }
-
 }

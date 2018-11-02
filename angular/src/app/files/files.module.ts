@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AceEditorModule } from 'ng2-ace-editor';
 import { ContextMenuModule } from 'ngx-contextmenu';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmModule } from '../confirm/confirm.module';
@@ -38,8 +38,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
 
     ContextMenuModule,
+    MonacoEditorModule,
     NgbModule,
-    AceEditorModule,
 
     ConfirmModule,
   ],

@@ -53,6 +53,9 @@ router-outlet + ng-component,
   display: flex;
 }
 
+.overflow {
+  overflow: auto;
+}
 
 /* Because of flex */
 .container-fluid {
@@ -86,22 +89,18 @@ waxe-messages .close {
   margin-right: -5px;
 }
 
+.no-overflow {
+  overflow: hidden;
+}
+
 /* editor */
-.editor-container {
-  min-height: 200px;
-  width: 100%;
-  overflow: auto;
-  display: flex;
+.my-code-editor {
+  display: flex !important;
   flex: 1;
-}
 
-.ace_scroller {
-  display: flex;
-  flex: 1;
+  .editor-container {
+    display: flex !important;
+    flex: 1;
+  }
 }
-
-.ace_content {
-  flex: 1;
-}
-
 /* end editor */
