@@ -27,11 +27,7 @@ export class FileEditorComponent implements OnInit {
   private routeSub: Subscription;
   private textChangedSub: Subscription;
 
-  editorOptions: {} = {
-    wordWrap: 'on',
-    scrollBeyondLastLine: false,
-    language: 'html',
-  };
+  editorOptions: {} = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,8 +43,12 @@ export class FileEditorComponent implements OnInit {
       })
       .subscribe((source: string) => {
         this.fileService.currentPath = this.path;
-        // TODO: better language support
-        this.editorOptions['language'] = this.path.endsWith('.html') ? 'html' : 'text';
+        this.editorOptions = {
+          wordWrap: 'on',
+          scrollBeyondLastLine: false,
+          // TODO: better language support
+          language: this.path.endsWith('.html') ? 'html' : 'text/plain',
+        };
         this.text = source;
       });
 
