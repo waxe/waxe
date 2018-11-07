@@ -13,7 +13,7 @@ import { MessagesServive } from '../messages/messages.service';
   <breadcrumb [path]="path"></breadcrumb>
   <div class="no-overflow flex">
     <ngx-monaco-editor class="my-code-editor" [options]="editorOptions"
-      [(ngModel)]="text" (ngModelChange)="change($event)"></ngx-monaco-editor>
+      [(ngModel)]="text" (ngModelChange)="change($event)" (onInit)="onInit($event)"></ngx-monaco-editor>
   </div>
   `
 })
@@ -46,8 +46,6 @@ export class FileEditorComponent implements OnInit {
         this.editorOptions = {
           wordWrap: 'on',
           scrollBeyondLastLine: false,
-          // TODO: better language support
-          language: this.path.endsWith('.html') ? 'html' : 'text/plain',
         };
         this.text = source;
       });
@@ -63,6 +61,24 @@ export class FileEditorComponent implements OnInit {
             });
           });
         });
+  }
+
+  _findLanguage(ext) {
+    const languages = monaco.languages.getLanguages();
+    for (const d of languages) {
+      if (d['extensions'].indexOf(`.${ext}`) !== -1) {
+        return d['id'];
+      }
+    }
+    return 'plaintext';
+  }
+
+  onInit(editor) {
+    // Monaco is not defined before the init so we need to wait to set the
+    // language.
+    const ext = this.path.split('.').pop();
+    const id = this._findLanguage(ext);
+    monaco.editor.setModelLanguage(editor.getModel(), id);
   }
 
   change(text: string) {
