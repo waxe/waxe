@@ -22,7 +22,8 @@ class TestGitView(BaseGitRepo):
         super(TestGitView, self).setUp()
         request = testing.DummyRequest()
         request.registry.settings = {
-            'root_path': self.directory
+            'root_path': self.directory,
+            'commit_author': 'Tester <test@lereskp.fr>',
         }
         self.view = GitView(request)
 

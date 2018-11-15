@@ -66,7 +66,7 @@ class TestHelper(BaseGitRepo):
         filenames = [e['path'] for e in expected]
 
         for f in filenames:
-            helper.git_commit(self.repo, [f])
+            helper.git_commit(self.repo, [f], author='Tester<test@lereskp.fr>')
             expected.pop(0)
             res = helper.git_status(self.repo)
             assert_status(res, expected)

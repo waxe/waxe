@@ -39,7 +39,8 @@ class GitView(object):
         repo = Repo(self.root_path)
         # TODO: paths validation
         paths = self.request.json_body.get('paths') or []
-        helper.git_commit(repo, paths)
+        author = self.request.registry.settings['commit_author']
+        helper.git_commit(repo, paths, author=author)
         return {}
 
 

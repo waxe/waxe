@@ -109,7 +109,7 @@ def git_pull(repo):
     return _get_file_statuses(current_commit, new_commit)
 
 
-def git_commit(repo, files):
+def git_commit(repo, files, author):
     statuses = git_status(repo)
 
     def _git_status(f):
@@ -125,5 +125,4 @@ def git_commit(repo, files):
             repo.git.add(f)
 
     repo.git.commit(
-        '-m', 'Update done by waxe website', author='Webmaster <webmaster@lereskp.fr>',
-        *files)
+        '-m', 'Update done by waxe website', author=author, *files)
