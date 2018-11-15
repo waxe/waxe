@@ -10,6 +10,7 @@ class BaseGitRepo(unittest.TestCase):
 
     def setUp(self):
         self.directory = tempfile.mkdtemp()
+        self.parent_directory = tempfile.mkdtemp()
         # Create a repository like this:
         #
         # D  file0.txt
@@ -17,7 +18,8 @@ class BaseGitRepo(unittest.TestCase):
         # T  file2.txt
         # A  file3.txt
         # ?? file4.txt
-        self.repo = Repo.init(self.directory)
+        self.parent_repo = Repo.init(self.parent_directory, bare=True)
+        self.repo = self.parent_repo.clone(self.directory)
 
         for n in range(5):
             basename = 'file%i.txt' % n
@@ -47,3 +49,4 @@ class BaseGitRepo(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.directory)
+        shutil.rmtree(self.parent_directory)

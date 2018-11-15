@@ -126,3 +126,4 @@ def git_commit(repo, files, author):
 
     repo.git.commit(
         '-m', 'Update done by waxe website', author=author, *files)
+    repo.git.push('origin', 'master')

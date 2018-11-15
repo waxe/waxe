@@ -72,3 +72,6 @@ class TestHelper(BaseGitRepo):
             assert_status(res, expected)
 
         self.assertEqual(expected, [])
+        parent_sha = self.parent_repo.commit().hexsha
+        sha = self.repo.commit().hexsha
+        self.assertEqual(parent_sha, sha)
