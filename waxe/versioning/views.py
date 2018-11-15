@@ -4,15 +4,12 @@ from pyramid.view import view_config, view_defaults
 from . import helper
 
 
-ROOT_PATH = '/home/lereskp/temp/waxe/client1_git'
-
-
 @view_defaults(renderer='json')
 class GitView(object):
 
     def __init__(self, request):
         self.request = request
-        self.root_path = ROOT_PATH
+        self.root_path = self.request.registry.settings['root_path']
 
     @view_config(route_name='status', request_method='GET')
     def status(self):

@@ -13,16 +13,13 @@ from .files import (
     relative_path,
 )
 
-# TODO: put root_path in config
-ROOT_PATH = '/home/lereskp/temp/waxe/client1'
-
 
 @view_defaults(renderer='json')
 class BaseView(object):
 
     def __init__(self, request):
         self.request = request
-        self.root_path = ROOT_PATH
+        self.root_path = self.request.registry.settings['root_path']
 
     def path_to_relpath(self, path):
         """Transform the given path in relative path

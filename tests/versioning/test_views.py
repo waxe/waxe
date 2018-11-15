@@ -1,6 +1,5 @@
 # # -*- coding: utf-8 -*-
 
-import os
 import shutil
 import tempfile
 
@@ -21,8 +20,11 @@ class TestGitView(BaseGitRepo):
 
     def setUp(self):
         super(TestGitView, self).setUp()
-        self.view = GitView(testing.DummyRequest())
-        self.view.root_path = self.directory
+        request = testing.DummyRequest()
+        request.registry.settings = {
+            'root_path': self.directory
+        }
+        self.view = GitView(request)
 
     def test_status(self):
         res = self.view.status()
