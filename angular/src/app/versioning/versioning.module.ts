@@ -6,6 +6,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
+
 import { VersioningService } from './versioning.service';
 import { VersioningStatusComponent } from './status.component';
 import { VersioningStatusBadgeComponent } from './status-badge.component';
@@ -26,6 +28,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
 
     NgbModule,
+
+    BreadcrumbModule,
   ],
   declarations: [
     VersioningStatusComponent,

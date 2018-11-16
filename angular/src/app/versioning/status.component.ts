@@ -6,6 +6,7 @@ import { FileStatus, VersioningService } from './versioning.service';
 
 @Component({
   template: `
+  <breadcrumb [path]="''"></breadcrumb>
   <div class="container-fluid flex overflow">
     <div *ngIf="empty">
       The repository is clean.

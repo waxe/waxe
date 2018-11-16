@@ -5,6 +5,7 @@ import { FileStatus, VersioningService } from './versioning.service';
 
 @Component({
   template: `
+  <breadcrumb [path]="''"></breadcrumb>
   <div class="container-fluid flex overflow">
     <p *ngIf="msg">{{ msg }}</p>
     <div *ngFor="let fileStatus of files">

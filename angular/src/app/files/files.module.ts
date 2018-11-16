@@ -8,6 +8,8 @@ import { ContextMenuModule } from 'ngx-contextmenu';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
+
 import { ConfirmModule } from '../confirm/confirm.module';
 
 import { FileBufferService } from './file-buffer.service';
@@ -19,7 +21,6 @@ import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 import { FileSelectionService } from './file-selection.service';
 import { FileService } from './file.service';
-import { BreadcrumbComponent } from './breadcrumb.component';
 
 import { MouseSelectionDirective, MouseSelectableDirective } from './file-mouse-selection.directive';
 
@@ -41,10 +42,10 @@ const routes: Routes = [
     MonacoEditorModule,
     NgbModule,
 
+    BreadcrumbModule,
     ConfirmModule,
   ],
   declarations: [
-    BreadcrumbComponent,
     FileComponent,
     FileEditorComponent,
     FileListComponent,
