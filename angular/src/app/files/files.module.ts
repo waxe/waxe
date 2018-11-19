@@ -12,6 +12,7 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
 import { ConfirmModule } from '../confirm/confirm.module';
 
+import { AuthGuard } from '../auth/auth.guard';
 import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
@@ -26,7 +27,7 @@ import { MouseSelectionDirective, MouseSelectableDirective } from './file-mouse-
 
 
 const routes: Routes = [
-  { path: '',  component: FileListComponent },
+  { path: '',  component: FileListComponent, canActivate: [AuthGuard]},
   { path: 'edit/txt',  component: FileEditorComponent },
 ];
 

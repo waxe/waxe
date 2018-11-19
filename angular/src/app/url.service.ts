@@ -9,12 +9,15 @@ export const URLS: any = {
   'versioning': {
     'status': '/versioning',
     'update': '/versioning/update',
+  },
+  'auth': {
+    'login': '/login',
   }
 };
 
 
 // Development path
-const PATH = 'http://127.0.0.1:6543';
+const PATH = '';
 
 export const API_URLS: any = {
   'files': {
@@ -29,7 +32,11 @@ export const API_URLS: any = {
     'status': `${PATH}/api/0/versioning`,
     'pull': `${PATH}/api/0/versioning/pull`,
     'commit': `${PATH}/api/0/versioning/commit`,
-  }
+  },
+  'auth': {
+    'login': `${PATH}/api/0/auth/login`,
+    'logout': `${PATH}/api/0/auth/logout`,
+  },
 };
 
 

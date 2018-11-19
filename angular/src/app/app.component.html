@@ -11,9 +11,18 @@
       </div>
     </li>
   </ul>
-  <span class="navbar-text" *ngIf="urlService.previewUrl && fileService.currentPath">
-    <a [href]="urlService.previewUrl + fileService.currentPath" target="_preview">Preview</a>
-  </span>
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown" *ngIf="urlService.previewUrl && fileService.currentPath">
+      <a class="nav-link" [href]="urlService.previewUrl + fileService.currentPath" target="_preview">Preview</a>
+    <li class="nav-item dropdown" ngbDropdown  *ngIf="authService.loggedUser">
+      <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+        {{ authService.loggedUser.username }}
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
+        <a class="dropdown-item" (click)="logout()">Logout</a>
+      </div>
+    </li>
+  </ul>
 </nav>
 <waxe-messages></waxe-messages>
 <router-outlet></router-outlet>
