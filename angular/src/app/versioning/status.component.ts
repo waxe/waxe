@@ -11,10 +11,10 @@ import { FileStatus, VersioningService } from './versioning.service';
     <div *ngIf="empty">
       The repository is clean.
     </div>
-    <form [formGroup]="form" (submit)="onSubmit()" *ngIf="!empty">
+    <form [formGroup]="form" (submit)="onSubmit()" *ngIf="!empty" class="form-status">
       <ng-template ngFor let-fileStatus [ngForOf]="files" let-i="index">
-        <div formArrayName="files">
-          <input type="checkbox" [formControlName]="i" />
+        <div formArrayName="files" class="form-group form-check">
+          <input type="checkbox" [formControlName]="i" class="form-check-input" />
           <status-badge [status]="fileStatus.status"></status-badge>
           <ng-template [ngIf]="fileStatus.old_path">
             {{fileStatus.old_path}} ->
