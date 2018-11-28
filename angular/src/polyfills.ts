@@ -78,7 +78,3 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-
-// Add global to window, assigning the value of window itself.
-// https://github.com/fxmontigny/ng2-ace-editor/issues/87
-(window as any).global = window;

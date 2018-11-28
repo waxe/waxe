@@ -19,7 +19,7 @@ import { Observable } from 'rxjs/Rx';
   providers: [ContextMenuService],
   template: `
   <breadcrumb [path]="path"></breadcrumb>
-  <div class="container-fluid flex" [contextMenu]="fileMenu" [contextMenuSubject]="{}" (contextmenu)="deSelectAll()">
+  <div class="container-fluid flex overflow" [contextMenu]="fileMenu" [contextMenuSubject]="{}" (contextmenu)="deSelectAll()">
     <div class="row files" [mouseSelection]="fileMenu">
       <div *ngFor="let column of columns" class="col-sm-6 ">
         <div *ngFor="let file of column" class="file">
