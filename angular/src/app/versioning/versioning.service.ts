@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { UrlService } from '../url.service';
 
@@ -16,18 +16,16 @@ export class FileStatus {
 @Injectable()
 export class VersioningService {
 
-  constructor(private http: Http, private urlService: UrlService) {}
+  constructor(private http: HttpClient, private urlService: UrlService) {}
 
   getStatus(): Observable<FileStatus[]> {
     return this.http
-      .get(this.urlService.API_URLS.versioning.status)
-      .map((res: Response) => res.json() as FileStatus[]);
+      .get<FileStatus[]>(this.urlService.API_URLS.versioning.status);
   }
 
   pull(): Observable<FileStatus[]> {
     return this.http
-      .get(this.urlService.API_URLS.versioning.pull)
-      .map((res: Response) => res.json() as FileStatus[]);
+      .get<FileStatus[]>(this.urlService.API_URLS.versioning.pull);
   }
 
   commit(paths) {

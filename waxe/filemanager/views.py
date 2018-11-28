@@ -14,7 +14,7 @@ from .files import (
 )
 
 
-@view_defaults(renderer='json')
+@view_defaults(renderer='json', permission='edit')
 class BaseView(object):
 
     def __init__(self, request):

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ContextMenuModule } from 'ngx-contextmenu';
@@ -27,7 +27,11 @@ import { MouseSelectionDirective, MouseSelectableDirective } from './file-mouse-
 
 
 const routes: Routes = [
-  { path: '',  component: FileListComponent, canActivate: [AuthGuard]},
+  {
+    path: '',
+    component: FileListComponent,
+    canActivate: [AuthGuard],
+  },
   { path: 'edit/txt',  component: FileEditorComponent },
 ];
 
@@ -36,7 +40,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     RouterModule.forRoot(routes),
 
     ContextMenuModule,
