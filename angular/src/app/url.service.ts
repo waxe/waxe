@@ -5,6 +5,10 @@ export const URLS: any = {
   'files': {
     'list': '',
     'view': '/edit/txt',
+  },
+  'versioning': {
+    'status': '/versioning',
+    'update': '/versioning/update',
   }
 };
 
@@ -21,6 +25,11 @@ export const API_URLS: any = {
       'copy': `${PATH}/api/0/files/copy`,
       'move': `${PATH}/api/0/files/move`,
   },
+  'versioning': {
+    'status': `${PATH}/api/0/versioning`,
+    'pull': `${PATH}/api/0/versioning/pull`,
+    'commit': `${PATH}/api/0/versioning/commit`,
+  }
 };
 
 

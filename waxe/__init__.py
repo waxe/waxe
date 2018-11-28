@@ -25,6 +25,7 @@ def main(global_config, **settings):
     config.include('.models')
     config.include('.routes')
     config.include('.filemanager.views')
+    config.include('.versioning.views')
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)
     config.scan()
     return config.make_wsgi_app()

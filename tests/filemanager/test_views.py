@@ -18,16 +18,14 @@ here = os.path.realpath(os.path.dirname(__file__))
 ROOT_PATH = os.path.normpath(os.path.join(here, '../', 'dir'))
 
 
-def dummy_request():
-    return testing.DummyRequest()
-
-
-@patch('waxe.filemanager.views.ROOT_PATH', ROOT_PATH)
 class TestBaseView(unittest.TestCase):
 
     def setUp(self):
-        self.view = BaseView(dummy_request())
-        self.view.root_path = ROOT_PATH
+        request = testing.DummyRequest()
+        request.registry.settings = {
+            'root_path': ROOT_PATH
+        }
+        self.view = BaseView(request)
 
     def test_path_to_relpath(self):
         path = os.path.join(ROOT_PATH, 'dir1')
@@ -41,7 +39,6 @@ class TestBaseView(unittest.TestCase):
         self.assertEqual(res, 'Hello dir1 world')
 
 
-@patch('waxe.filemanager.views.ROOT_PATH', ROOT_PATH)
 class TestFilesView(unittest.TestCase):
 
     def test___init__(self):
@@ -94,7 +91,6 @@ class TestFilesView(unittest.TestCase):
         self.assertEqual(res, expected)
 
 
-@patch('waxe.filemanager.views.ROOT_PATH', ROOT_PATH)
 class TestFilesPostView(unittest.TestCase):
 
     def test___init__(self):
