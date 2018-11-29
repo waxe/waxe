@@ -19,7 +19,7 @@ export class FileService {
   getFiles(path: string = null): Observable<File[]> {
     const params = path ? new HttpParams().set('path', path) : {};
     return this.http
-      .get<File[]>(this.urlService.API_URLS.files.list, params);
+      .get<File[]>(this.urlService.API_URLS.files.list, {params});
   }
 
 
