@@ -1,5 +1,6 @@
 import base64
 import os
+from paste.util.import_string import eval_import
 import shutil
 
 from pyramid.view import view_config, view_defaults
@@ -79,8 +80,15 @@ class FilesView(BaseView):
         if not os.path.isfile(self.abspath):
             raise exc.HTTPNotFound()
 
+        def transform(s):
+            func_str = self.request.registry.settings.get(
+                'transform_before_edit')
+            if func_str:
+                return eval_import(func_str)(self.abspath, s)
+            return s
+
         content = open(self.abspath, 'r').read()
-        content = content.decode('utf-8')
+        content = transform(content.decode('utf-8'))
         return {
             'source': content,
         }
@@ -106,8 +114,15 @@ class FilesPostView(BaseView):
         if source is None:
             raise exc.HTTPBadRequest()
 
+        def transform(s):
+            func_str = self.request.registry.settings.get(
+                'transform_after_edit')
+            if func_str:
+                return eval_import(func_str)(self.abspath, s)
+            return s
+
         with open(self.abspath, 'w') as f:
-            f.write(source.encode('utf-8'))
+            f.write(transform(source.encode('utf-8')))
 
         return {}
 
@@ -124,6 +139,8 @@ class FilesPostView(BaseView):
             self.request.response.status = 409
             return {'errors': {'name': "File '%s' already exists" % name}}
 
+        # TODO: perhaps we should also transform the source here.
+        # Right now we can't create a file with content so it's okay.
         source = self.request.json_body.get('source') or ''
 
         with open(abspath, 'w') as f:

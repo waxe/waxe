@@ -19,6 +19,7 @@ requires = [
     'waitress',
     'gitpython',
     'bcrypt',
+    'paste',
     ]
 
 tests_require = [
