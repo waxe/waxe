@@ -9,8 +9,8 @@ import {
 } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-import { tap, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { _throw } from 'rxjs/observable/throw';
 
 import { UrlService } from '../url.service';
 
@@ -28,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
               this.router.navigate([this.urlService.URLS.auth.login]);
             }
           }
-          return Observable.of(response);
+          return _throw(response);
         })
       );
   }

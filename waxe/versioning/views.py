@@ -1,10 +1,10 @@
-from git import Repo
+from git import GitCommandError, Repo
 from pyramid.view import view_config, view_defaults
 
 from . import helper
 
 
-@view_defaults(renderer='json')
+@view_defaults(renderer='json')  # , permission='versioning')
 class GitView(object):
 
     def __init__(self, request):
@@ -17,6 +17,45 @@ class GitView(object):
         return {
             'status': helper.git_status(repo)
         }
+
+    @view_config(route_name='branches', request_method='GET')
+    def branches(self):
+        repo = Repo(self.root_path)
+        try:
+            current_branch = repo.active_branch.name
+        except TypeError:
+            # Raised when the branch is
+            # detached
+            current_branch = None
+        return {
+            'branches': [b.name for b in repo.branches],
+            'current': current_branch,
+        }
+
+    @view_config(route_name='branches', request_method='POST')
+    def switch_branch(self):
+        repo = Repo(self.root_path)
+        branch_name = self.request.json_body.get('branch')
+        if not branch_name:
+            self.request.response.status = 400
+            return {'error': "No branch given"}
+
+        try:
+            branch = next(b for b in repo.branches if b.name == branch_name)
+        except StopIteration:
+            self.request.response.status = 400
+            return {'error': "The branch %s doesn't exists" % branch_name}
+
+        if helper.git_status(repo):
+            self.request.response.status = 400
+            return {'error': 'Commit your changes before switching branch'}
+
+        try:
+            branch.checkout()
+        except GitCommandError, exc:
+            self.request.response.status = 400
+            return {'error': unicode(exc.stderr)}
+        return {}
 
     @view_config(route_name='pull', request_method='GET')
     def pull(self):
@@ -46,5 +85,6 @@ class GitView(object):
 
 def includeme(config):
     config.add_route('status', '/api/0/versioning')
+    config.add_route('branches', '/api/0/versioning/branches')
     config.add_route('pull', '/api/0/versioning/pull')
     config.add_route('commit', '/api/0/versioning/commit')
