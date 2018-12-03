@@ -18,13 +18,18 @@ export class MessagesServive {
 
 
   public add(message: IMessage) {
-    // TODO: Don't delete the error message?
     this._messages = [message];
     this._messagesSubject.next(this._messages);
 
-    setTimeout(() => {
-      this.remove(message);
-    }, 1500);
+    if (message.type !== 'danger') {
+      setTimeout(() => {
+        this.remove(message);
+      }, 1500);
+    }
+  }
+
+  public addError(txt: string) {
+    this.add({type: 'danger', txt} as IMessage);
   }
 
   public remove(message: IMessage) {

@@ -31,6 +31,7 @@ export const API_URLS: any = {
   },
   'versioning': {
     'status': `${PATH}/api/0/versioning`,
+    'branches': `${PATH}/api/0/versioning/branches`,
     'pull': `${PATH}/api/0/versioning/pull`,
     'commit': `${PATH}/api/0/versioning/commit`,
   },
