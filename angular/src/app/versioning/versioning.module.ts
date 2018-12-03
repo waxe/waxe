@@ -6,6 +6,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { AuthGuard } from '../auth/auth.guard';
+
 import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
 import { VersioningService } from './versioning.service';
@@ -15,8 +17,16 @@ import { VersioningUpdateComponent } from './update.component';
 
 
 const routes: Routes = [
-  { path: 'versioning',  component: VersioningStatusComponent },
-  { path: 'versioning/update',  component: VersioningUpdateComponent },
+  {
+    path: 'versioning',
+    component: VersioningStatusComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'versioning/update',
+    component: VersioningUpdateComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 
