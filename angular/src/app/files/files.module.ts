@@ -32,7 +32,11 @@ const routes: Routes = [
     component: FileListComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'edit/txt',  component: FileEditorComponent },
+  {
+    path: 'edit/txt',
+    component: FileEditorComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 
