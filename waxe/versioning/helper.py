@@ -1,3 +1,6 @@
+import git
+
+
 CHANGE_TYPE_UNTRACKED = '?'
 CHANGE_TYPE_ADDED = 'A'
 CHANGE_TYPE_DELETED = 'D'
@@ -89,11 +92,25 @@ def _get_file_statuses(parent_commit, commit):
     return lis
 
 
+def get_current_branch(repo):
+    try:
+        return repo.active_branch
+    except TypeError:
+        # Raised when the branch is
+        # detached
+        return None
+
+
 def git_pull(repo):
     current_commit = repo.commit()
 
     origin = repo.remotes.origin
-    res = origin.pull()
+    # res = origin.pull()
+    res = origin.fetch()
+    current_branch = get_current_branch(repo)
+    g = repo.git.execute(['git', 'rebase',  '%s/%s' % (
+        origin.name, current_branch.name)])
+    # TODO: is there a status  in g ?
 
     new_commit = repo.commit()
 
@@ -126,4 +143,5 @@ def git_commit(repo, files, author):
 
     repo.git.commit(
         '-m', 'Update done by waxe website', author=author, *files)
-    repo.git.push('origin', 'master')
+    current_branch = get_current_branch(repo)
+    repo.git.push('origin', current_branch.name)
