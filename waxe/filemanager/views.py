@@ -75,6 +75,21 @@ class FilesView(BaseView):
             }]
         return lis
 
+    @view_config(route_name='all_files', request_method=('GET', 'OPTIONS'))
+    def all_files_view(self):
+        """Get the all the files
+        """
+        try:
+            folders, filenames = get_folders_and_files(self.abspath,
+                                                       recursive=True)
+        except IOError, e:
+            raise exc.HTTPNotFound(self.remove_abspath(str(e)))
+
+        lis = []
+        for filename in filenames:
+            lis.append(self.path_to_relpath(filename))
+        return lis
+
     @view_config(route_name='source')
     def source(self):
         if not os.path.isfile(self.abspath):
@@ -211,6 +226,7 @@ class FilesPostView(BaseView):
 
 def includeme(config):
     config.add_route('files', '/api/0/files')
+    config.add_route('all_files', '/api/0/files/all')
     config.add_route('source', '/api/0/files/source')
     config.add_route('rename', '/api/0/files/rename')
     config.add_route('create_folder', '/api/0/files/folder')

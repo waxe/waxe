@@ -68,7 +68,7 @@ def cleanup_path(root_path, s):
     return s
 
 
-def get_folders_and_files(abspath, exts=None):
+def get_folders_and_files(abspath, exts=None, recursive=False):
     """Get all the folders and files in the given abspath
 
     ..note:: this is not recursive
@@ -83,13 +83,18 @@ def get_folders_and_files(abspath, exts=None):
         dirnames.sort()
         filenames.sort()
 
+        dirnames[:] = [d for d in dirnames if not d.startswith('.')]
+
         for d in dirnames:
             _append_file(d, dirpath, folders)
 
         for f in filenames:
             _append_file(f, dirpath, files, exts)
 
-        return folders, files
+        if not recursive:
+            return folders, files
+
+    return folders, files
 
 
 def copytree(abssrc, absdst):
