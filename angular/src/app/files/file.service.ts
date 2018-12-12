@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 
 import { UrlService } from '../url.service';
 import { File } from './file';
@@ -14,7 +14,11 @@ export class FileService {
   // This is used in the file editor to have the preview button.
   public currentPath: string;
 
+  private allFiles: string[];
+  private allFilesSub: Observable<string[]>;
+
   constructor(private http: HttpClient, private router: Router, private urlService: UrlService) {}
+
 
   getFiles(path: string = null): Observable<File[]> {
     const params = path ? new HttpParams().set('path', path) : {};
@@ -22,6 +26,23 @@ export class FileService {
       .get<File[]>(this.urlService.API_URLS.files.list, {params});
   }
 
+  _getAllFiles(path: string = null): Observable<string[]> {
+    return this.http
+      .get<string[]>(this.urlService.API_URLS.files.all);
+  }
+
+  getAllFiles() {
+    if (this.allFiles) {
+      return of(this.allFiles);
+    }
+
+    if (this.allFilesSub) {
+      return this.allFilesSub;
+    }
+
+    this.allFilesSub = this._getAllFiles();
+    return this.allFilesSub;
+  }
 
   getSource(path: string): Observable<string> {
     const params = new HttpParams().set('path', path);
