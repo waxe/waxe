@@ -114,11 +114,11 @@ export class FileListComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams
-      .switchMap((params: Params) => {
+    this.route.queryParams.pipe(
+      switchMap((params: Params) => {
         this.path = params['path'];
         return of(this.path);
-      }).subscribe(() => this.fetch());
+      })).subscribe(() => this.fetch());
 
       this.keyDownSub = fromEvent(document, 'keydown').subscribe(event => {
         const key = (event['key'] || event['which']);

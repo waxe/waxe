@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
+
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { FileService } from './file.service';
 import { MessagesServive } from '../messages/messages.service';
@@ -17,7 +18,7 @@ import { MessagesServive } from '../messages/messages.service';
   </div>
   `
 })
-export class FileEditorComponent implements OnInit {
+export class FileEditorComponent implements OnDestroy, OnInit {
   @ViewChild('editor') editor;
 
   path: string;
@@ -36,24 +37,25 @@ export class FileEditorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.routeSub = this.route.queryParams
-      .switchMap((params: Params) => {
+    this.routeSub = this.route.queryParams.pipe(
+      switchMap((params: Params) => {
         this.path = params['path'];
         return this.fileService.getSource(params['path']);
       })
-      .subscribe((source: string) => {
-        this.fileService.currentPath = this.path;
-        this.editorOptions = {
-          wordWrap: 'on',
-          scrollBeyondLastLine: false,
-        };
-        this.text = source;
-      });
+    )
+    .subscribe((source: string) => {
+      this.fileService.currentPath = this.path;
+      this.editorOptions = {
+        wordWrap: 'on',
+        scrollBeyondLastLine: false,
+      };
+      this.text = source;
+    });
 
-      this.textChangedSub = this.textChanged
-        .debounceTime(500)
-        .distinctUntilChanged()
-        .subscribe(text => {
+      this.textChangedSub = this.textChanged.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+      ).subscribe(text => {
           this.fileService.update(this.path, text).subscribe(() => {
             this.messagesService.add({
               type: 'success',

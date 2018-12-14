@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { Observable, Subscription, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { UrlService } from '../url.service';
 import { File } from './file';
@@ -48,7 +49,9 @@ export class FileService {
     const params = new HttpParams().set('path', path);
 
     return this.http
-      .get<{source}>(this.urlService.API_URLS.files.source, {params}).map(res => res.source);
+      .get<{source}>(this.urlService.API_URLS.files.source, {params}).pipe(
+        map(res => res.source)
+      );
   }
 
 
@@ -69,10 +72,11 @@ export class FileService {
       'name': name,
     });
     return this.http
-      .post<{}>(this.urlService.API_URLS.files.folder, data)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .post<{}>(this.urlService.API_URLS.files.folder, data).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   createFile(path: string, name: string): Observable<{}> {
@@ -81,10 +85,11 @@ export class FileService {
       'name': name,
     });
     return this.http
-      .post<{}>(this.urlService.API_URLS.files.list, data)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .post<{}>(this.urlService.API_URLS.files.list, data).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   delete(files: File[]): Observable<{}> {
@@ -94,10 +99,11 @@ export class FileService {
       body: body,
     };
     return this.http
-      .delete<{}>(this.urlService.API_URLS.files.list, httpOptions)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .delete<{}>(this.urlService.API_URLS.files.list, httpOptions).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   rename(path: string, name: string): Observable<{}> {
@@ -106,10 +112,11 @@ export class FileService {
       'name': name,
     });
     return this.http
-      .post<{}>(this.urlService.API_URLS.files.rename, data)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .post<{}>(this.urlService.API_URLS.files.rename, data).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   copy(files: File[], path: string): Observable<{}> {
@@ -118,10 +125,11 @@ export class FileService {
       'dst': path,
     });
     return this.http
-      .post<{}>(this.urlService.API_URLS.files.copy, data)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .post<{}>(this.urlService.API_URLS.files.copy, data).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   move(files: File[], path: string) {
@@ -130,10 +138,11 @@ export class FileService {
       'dst': path,
     });
     return this.http
-      .post(this.urlService.API_URLS.files.move, data)
-      .catch((error) => {
-        return Observable.throw(error.json());
-      });
+      .post(this.urlService.API_URLS.files.move, data).pipe(
+        catchError((error) => {
+          return Observable.throw(error.json());
+        })
+      );
   }
 
   open(file: File): void {

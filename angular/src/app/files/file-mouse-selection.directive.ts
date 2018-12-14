@@ -1,6 +1,6 @@
 import { ContentChildren, Directive, ElementRef, Input, OnInit, QueryList, Renderer } from '@angular/core';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 
