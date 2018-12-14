@@ -4,6 +4,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { FileService } from './file.service';
 import { MessagesServive } from '../messages/messages.service';
 
@@ -50,10 +52,10 @@ export class FileEditorComponent implements OnInit {
         this.text = source;
       });
 
-      this.textChangedSub = this.textChanged
-        .debounceTime(500)
-        .distinctUntilChanged()
-        .subscribe(text => {
+      this.textChangedSub = this.textChanged.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+      ).subscribe(text => {
           this.fileService.update(this.path, text).subscribe(() => {
             this.messagesService.add({
               type: 'success',

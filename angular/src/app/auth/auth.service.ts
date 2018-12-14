@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { UrlService } from '../url.service';
 
@@ -46,14 +46,14 @@ export class AuthService {
 
   isLoggedIn(): Observable<boolean> {
     if (this.loggedUser) {
-      return Observable.of(true);
+      return of(true);
     }
     return this.getLogin().pipe(
       map(res => {
         return true;
       }),
       catchError(res => {
-        return Observable.of(false);
+        return of(false);
       })
     );
   }
