@@ -4,6 +4,7 @@ CHANGE_TYPE_DELETED = 'D'
 CHANGE_TYPE_MODIFIED = 'M'
 CHANGE_TYPE_RENAMED = 'R'
 CHANGE_TYPE_TYPE_CHANGED = 'T'
+CHANGE_TYPE_CONFLICTED = 'U'
 
 
 class FileStatus(object):
@@ -22,6 +23,9 @@ class FileStatus(object):
             'path': self.path,
             'old_path': self.old_path,
         }
+
+    def __hash__(self):
+        return hash((self.path, self.old_path, self.status))
 
     def __repr__(self):
         return str(self.__json__())
@@ -58,6 +62,10 @@ class FileStatus(object):
             assert diff.a_path == diff.b_path
             return FileStatus(CHANGE_TYPE_TYPE_CHANGED, diff.b_path)
 
+        if diff.change_type == CHANGE_TYPE_CONFLICTED:
+            assert diff.a_path == diff.b_path
+            return FileStatus(CHANGE_TYPE_CONFLICTED, diff.b_path)
+
         raise NotImplementedError(
                 'dif.change_type %s not supported.' % diff.change_type)
 
@@ -78,7 +86,17 @@ def git_status(repo):
         # TODO: better exception
         raise Exception('Status failed')
 
-    return lis
+    conflicted = set([fs for fs in lis
+                      if fs.status == CHANGE_TYPE_CONFLICTED])
+
+    conflicted_paths = [fs.path for fs in conflicted]
+
+    return (
+        list(conflicted) +
+        # A conflicted file can be in multiple diff so we need to make a filter
+        # here to only display once.
+        [fs for fs in lis if fs.path not in conflicted_paths]
+    )
 
 
 def _get_file_statuses(parent_commit, commit):

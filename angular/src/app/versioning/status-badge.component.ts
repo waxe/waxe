@@ -22,15 +22,17 @@ export class VersioningStatusBadgeComponent {
     'M': 'Modified',
     'R': 'Renamed',
     'T': 'Type changed',
+    'U': 'conflicted',
   };
 
   BADGE_CSS_MAPPING = {
     'A': 'success',
     '?': 'success',
-    'D': 'danger',
+    'D': 'warning',
     'M': 'secondary',
     'R': 'primary',
     'T': 'warning',
+    'U': 'danger',
   };
 
   @Input()
