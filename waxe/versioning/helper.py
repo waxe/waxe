@@ -107,6 +107,15 @@ def _get_file_statuses(parent_commit, commit):
     return lis
 
 
+def get_current_branch(repo):
+    try:
+        return repo.active_branch
+    except TypeError:
+        # Raised when the branch is
+        # detached
+        return None
+
+
 def git_pull(repo):
     current_commit = repo.commit()
 

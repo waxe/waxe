@@ -21,15 +21,10 @@ class GitView(object):
     @view_config(route_name='branches', request_method='GET')
     def branches(self):
         repo = Repo(self.root_path)
-        try:
-            current_branch = repo.active_branch.name
-        except TypeError:
-            # Raised when the branch is
-            # detached
-            current_branch = None
+        current_branch = helper.get_current_branch(repo)
         return {
             'branches': [b.name for b in repo.branches],
-            'current': current_branch,
+            'current': current_branch.name if current_branch else None,
         }
 
     @view_config(route_name='branches', request_method='POST')
