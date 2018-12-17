@@ -2,6 +2,7 @@ import './rxjs-extensions';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -26,6 +27,7 @@ import { MessagesServive } from './messages/messages.service';
 @NgModule({
   imports: [
     BrowserModule,
+    FormsModule,
     CommonModule,
     HttpClientModule,
     RouterModule,

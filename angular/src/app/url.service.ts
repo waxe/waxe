@@ -21,6 +21,7 @@ const PATH = '';
 
 export const API_URLS: any = {
   'files': {
+      'all': `${PATH}/api/0/files/all`,
       'list': `${PATH}/api/0/files`,
       'source': `${PATH}/api/0/files/source`,
       'folder': `${PATH}/api/0/files/folder`,

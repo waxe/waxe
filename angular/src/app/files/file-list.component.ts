@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 import { File, Folder } from './file';
 import { FileBufferService } from './file-buffer.service';
@@ -13,12 +13,17 @@ import { CreateFileModalComponent } from './create-file-modal.component';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription, fromEvent, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter,  map, switchMap } from 'rxjs/operators';
+
 
 @Component({
   providers: [ContextMenuService],
   template: `
   <breadcrumb [path]="path"></breadcrumb>
+  <div class="search-input-container">
+    <input type="text" class="form-control search-input" #input="ngbTypeahead" #inputElt hidden (blur)="closeSearch()" [(ngModel)]="model" (selectItem)="onSelectItem($event)" [ngbTypeahead]="search">
+  </div>
   <div class="container-fluid flex overflow" [contextMenu]="fileMenu" [contextMenuSubject]="{}" (contextmenu)="deSelectAll()">
     <div class="row files" [mouseSelection]="fileMenu">
       <div *ngFor="let column of columns" class="col-sm-6 ">
@@ -67,14 +72,24 @@ import { Observable } from 'rxjs/Rx';
   </context-menu>
   `
 })
-export class FileListComponent implements OnInit {
+export class FileListComponent implements OnDestroy, OnInit {
   @ViewChild(ContextMenuComponent) public fileMenu: ContextMenuComponent;
+
+  @ViewChild('input') ngbTypeahead: NgbTypeahead;
+  @ViewChild('inputElt') inputElRef: ElementRef;
 
   columns: File[][];
   path: string;
-  nbCols: number = 2;
+  nbCols = 2;
+
+  keyDownSub: Subscription;
+
+  inputVisible = false;
+
+  public model: any;
 
   constructor(
+    private renderer: Renderer2,
     private route: ActivatedRoute,
     private router: Router,
     private fileBufferService: FileBufferService,
@@ -102,8 +117,53 @@ export class FileListComponent implements OnInit {
     this.route.queryParams
       .switchMap((params: Params) => {
         this.path = params['path'];
-        return Observable.of(this.path);
+        return of(this.path);
       }).subscribe(() => this.fetch());
+
+      this.keyDownSub = fromEvent(document, 'keydown').subscribe(event => {
+        const key = (event['key'] || event['which']);
+        if (this.inputVisible) {
+          if (key === 'Escape') {
+            this.closeSearch();
+          }
+        } else {
+          const NOT_ALLOWED = ['Control', 'Escape', 'Alt', 'Shift'];
+          if (NOT_ALLOWED.indexOf(key) < 0) {
+            this.renderer.removeAttribute(this.inputElRef.nativeElement, 'hidden');
+            this.inputElRef.nativeElement.focus();
+            this.inputVisible = true;
+          }
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.keyDownSub.unsubscribe();
+  }
+
+  search = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term => this.fileService.getAllFiles().pipe(
+          map((v: any) => v.filter(a => a.toLowerCase().indexOf(term.toLowerCase()) > -1)))
+      ),
+    );
+  }
+
+  closeSearch() {
+    this.renderer.setAttribute(this.inputElRef.nativeElement, 'hidden', 'hidden');
+    this.inputElRef.nativeElement.value = '';
+    this.ngbTypeahead.dismissPopup();
+    this.inputVisible = false;
+  }
+
+  onSelectItem($event) {
+    this.fileService.open({
+      name: $event.item,
+      path: $event.item,
+      type: 'file',
+    });
   }
 
   public isItemDefinedBound = this.isItemDefined.bind(this);
