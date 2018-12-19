@@ -55,17 +55,16 @@ class GitView(object):
     @view_config(route_name='pull', request_method='GET')
     def pull(self):
         repo = Repo(self.root_path)
+        file_statuses = helper.update_repo(repo)
 
-        file_status = helper.git_pull(repo)
-
-        if not file_status:
+        if not file_statuses:
             return {
                 'msg': 'The repo was already up to date.'
             }
 
         return {
             'msg': 'List of files modified since your last update:',
-            'status': file_status,
+            'status': file_statuses,
         }
 
     @view_config(route_name='commit', request_method='POST')

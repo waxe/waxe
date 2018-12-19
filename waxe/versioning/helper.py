@@ -116,24 +116,61 @@ def get_current_branch(repo):
         return None
 
 
-def git_pull(repo):
-    current_commit = repo.commit()
-
+def git_fetch(repo):
     origin = repo.remotes.origin
-    res = origin.pull()
+    branch = get_current_branch(repo)
 
-    new_commit = repo.commit()
+    res = origin.fetch()
 
-    if current_commit == new_commit:
+    # Only get the info of the current branch from origin
+    info = next(r for r in res if r.name == '%s/%s' % (
+        origin.name, branch.name))
+
+    if info.flags == info.HEAD_UPTODATE:
+        # Already up to date
         return []
 
-    assert(len(res) == 1)
+    if info.flags == info.FAST_FORWARD:
+        return _get_file_statuses(repo, info.old_commit, info.commit)
 
-    for info in res:
-        if info.flags != info.HEAD_UPTODATE:
-            # TODO: nice exception
-            raise Exception()
-    return _get_file_statuses(current_commit, new_commit)
+    if info.flags == info.FORCED_UPDATE:
+        # There was a git pull --force on the origin
+        return _get_file_statuses(repo, info.old_commit, info.commit)
+
+    # Other flags:
+    # info.NEW_TAG
+    # info.NEW_HEAD
+    # info.REJECTED
+    # info.ERROR
+    raise NotImplementedError('Unsupported flags %i' % info.flags)
+
+
+def git_rebase(repo):
+    """
+    NOTE: we can use autostash=True but it doesn't work for old git client so
+    we do it manually.
+    """
+    def count_stash():
+        return len(repo.git.stash('list').split('\n'))
+
+    origin = repo.remotes.origin
+    current_branch = get_current_branch(repo)
+
+    before_cnt = count_stash()
+    repo.git.stash('save')
+    has_stash = count_stash() != before_cnt
+
+    repo.git.rebase('%s/%s' % (origin.name, current_branch.name))
+
+    if has_stash:
+        # TODO: can raise an exception on conflict
+        repo.git.stash('pop')
+
+
+def update_repo(repo):
+    file_statuses = git_fetch(repo)
+    git_rebase(repo)
+    return file_statuses
 
 
 def git_commit(repo, files, author):
