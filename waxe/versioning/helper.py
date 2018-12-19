@@ -190,4 +190,5 @@ def git_commit(repo, files, author):
 
     repo.git.commit(
         '-m', 'Update done by waxe website', author=author, *files)
-    repo.git.push('origin', 'master')
+    current_branch = get_current_branch(repo)
+    repo.git.push('origin', current_branch.name)
