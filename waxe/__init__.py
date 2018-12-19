@@ -1,8 +1,11 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
+from pyramid.view import view_config
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+
+from git import GitCommandError
 
 from auth.security import RootFactory, groupfinder
 
@@ -20,6 +23,17 @@ def add_cors_headers_response_callback(event):
         })
     event.request.add_response_callback(cors_headers)
 
+
+@view_config(context=Exception, renderer='json')
+def exception_view(context, request):
+    if isinstance(context, GitCommandError):
+        msg = context.stderr
+    else:
+        msg = unicode(context)
+
+    msg = msg if msg else 'An error occured please contact administrator'
+    request.response.status = 500
+    return {'error': msg}
 
 
 def main(global_config, **settings):
