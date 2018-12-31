@@ -34,6 +34,7 @@ export const API_URLS: any = {
     'branches': `${PATH}/api/0/versioning/branches`,
     'pull': `${PATH}/api/0/versioning/pull`,
     'commit': `${PATH}/api/0/versioning/commit`,
+    'check': `${PATH}/api/0/versioning/check`,
   },
   'auth': {
     'login': `${PATH}/api/0/auth/login`,

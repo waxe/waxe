@@ -99,6 +99,16 @@ def git_status(repo):
     )
 
 
+def check_repo(repo):
+    statuses = git_status(repo)
+    for status in statuses:
+        if status.status == CHANGE_TYPE_CONFLICTED:
+            return False
+
+    # TODO: check if we are in a merge or rebase
+    return True
+
+
 def _get_file_statuses(parent_commit, commit):
     diffs = parent_commit.diff(commit)
     lis = []

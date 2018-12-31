@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, shareReplay } from 'rxjs/operators';
 
 
 import { MessagesServive } from '../messages/messages.service';
@@ -18,6 +18,8 @@ export class FileStatus {
 
 @Injectable()
 export class VersioningService {
+
+  private cache$: Observable<any>;
 
   constructor(private http: HttpClient, private messagesService: MessagesServive, private urlService: UrlService) {}
 
@@ -52,5 +54,24 @@ export class VersioningService {
     });
     return this.http
       .post(this.urlService.API_URLS.versioning.commit, data);
+  }
+
+  get_status() {
+    return this.http
+      .get<boolean>(this.urlService.API_URLS.versioning.check);
+  }
+
+
+  forceReload() {
+    this.cache$ = null;
+  }
+
+  check(): Observable<boolean> {
+    if (!this.cache$) {
+      this.cache$  = this.get_status().pipe(
+        shareReplay(1)
+      );
+    }
+    return this.cache$;
   }
 }

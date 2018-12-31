@@ -13,6 +13,7 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 import { ConfirmModule } from '../confirm/confirm.module';
 
 import { AuthGuard } from '../auth/auth.guard';
+import { VersioningCheckGuard } from '../versioning/check.guard';
 import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
@@ -30,12 +31,12 @@ const routes: Routes = [
   {
     path: '',
     component: FileListComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, VersioningCheckGuard],
   },
   {
     path: 'edit/txt',
     component: FileEditorComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, VersioningCheckGuard],
   },
 ];
 
