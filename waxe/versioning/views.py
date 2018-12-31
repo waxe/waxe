@@ -76,9 +76,15 @@ class GitView(object):
         helper.git_commit(repo, paths, author=author)
         return {}
 
+    @view_config(route_name='check', request_method='GET')
+    def check(self):
+        repo = Repo(self.root_path)
+        return helper.check_repo(repo)
+
 
 def includeme(config):
     config.add_route('status', '/api/0/versioning')
     config.add_route('branches', '/api/0/versioning/branches')
     config.add_route('pull', '/api/0/versioning/pull')
     config.add_route('commit', '/api/0/versioning/commit')
+    config.add_route('check', '/api/0/versioning/check')
