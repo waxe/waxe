@@ -7,7 +7,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 
 from git import GitCommandError
 
-from auth.security import RootFactory, groupfinder
+from .auth.security import RootFactory, groupfinder
 
 
 # Allow cross origin in dev

@@ -52,7 +52,7 @@ class FilesView(BaseView):
         """
         try:
             folders, filenames = get_folders_and_files(self.abspath)
-        except IOError, e:
+        except IOError as e:
             raise exc.HTTPNotFound(self.remove_abspath(str(e)))
 
         lis = []
@@ -82,7 +82,7 @@ class FilesView(BaseView):
         try:
             folders, filenames = get_folders_and_files(self.abspath,
                                                        recursive=True)
-        except IOError, e:
+        except IOError as e:
             raise exc.HTTPNotFound(self.remove_abspath(str(e)))
 
         lis = []
@@ -178,11 +178,11 @@ class FilesPostView(BaseView):
 
         try:
             os.mkdir(abspath)
-        except Exception, e:
+        except Exception as e:
             self.request.response.status = 500
             return {
                 'message': 'Internal error: %s' % (
-                    self.remove_abspath(unicode(e)))
+                    self.remove_abspath(str(e)))
             }
 
         return {
@@ -208,11 +208,11 @@ class FilesPostView(BaseView):
 
         try:
             shutil.move(self.abspath, new_abspath)
-        except Exception, e:
+        except Exception as e:
             self.request.response.status = 500
             return {
                 'message': 'Internal error: %s' % (
-                    self.remove_abspath(unicode(e)))
+                    self.remove_abspath(str(e)))
             }
 
         return {

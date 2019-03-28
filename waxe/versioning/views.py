@@ -47,9 +47,9 @@ class GitView(object):
 
         try:
             branch.checkout()
-        except GitCommandError, exc:
+        except GitCommandError as exc:
             self.request.response.status = 400
-            return {'error': unicode(exc.stderr)}
+            return {'error': str(exc.stderr)}
         return {}
 
     @view_config(route_name='pull', request_method='GET')
