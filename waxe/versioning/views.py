@@ -72,8 +72,9 @@ class GitView(object):
         repo = Repo(self.root_path)
         # TODO: paths validation
         paths = self.request.json_body.get('paths') or []
+        message = self.request.json_body.get('message')
         author = self.request.registry.settings['commit_author']
-        helper.git_commit(repo, paths, author=author)
+        helper.git_commit(repo, paths, author=author, message=message)
         return {}
 
     @view_config(route_name='check', request_method='GET')

@@ -48,9 +48,10 @@ export class VersioningService {
       .get<FileStatus[]>(this.urlService.API_URLS.versioning.pull);
   }
 
-  commit(paths) {
+  commit(paths, message) {
     const data: string = JSON.stringify({
       'paths': paths,
+      'message': message,
     });
     return this.http
       .post(this.urlService.API_URLS.versioning.commit, data);

@@ -183,7 +183,8 @@ def update_repo(repo):
     return file_statuses
 
 
-def git_commit(repo, files, author):
+def git_commit(repo, files, author, message=None):
+    message = message or 'Update done by waxe website'
     statuses = git_status(repo)
 
     def _git_status(f):
@@ -199,6 +200,6 @@ def git_commit(repo, files, author):
             repo.git.add(f)
 
     repo.git.commit(
-        '-m', 'Update done by waxe website', author=author, *files)
+        '-m', message, author=author, *files)
     current_branch = get_current_branch(repo)
     repo.git.push('origin', current_branch.name)
