@@ -26,11 +26,6 @@ def check_password(pw, hashed_pw):
     return bcrypt.checkpw(pw.encode('utf8'), expected_hash)
 
 
-USERS = {
-    'editor': hash_password('editor'),
-    'viewer': hash_password('viewer')
-}
-
 ROLES = {
     'editor': ['role:edit'],
 }
@@ -41,6 +36,5 @@ def groupfinder(userid, request):
 
 
 def get_roles(userid):
-    if userid in USERS:
-        roles = ROLES.get(userid, [])
-        return [role.split(':')[-1] for role in roles]
+    roles = ROLES.get(userid, [])
+    return [role.split(':')[-1] for role in roles]

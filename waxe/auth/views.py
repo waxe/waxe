@@ -9,8 +9,9 @@ from pyramid.view import (
     view_defaults
     )
 
+from  ..models import User
+
 from .security import (
-    USERS,
     check_password,
     get_roles,
 )
@@ -56,8 +57,12 @@ class AuthView(object):
             self.request.response.status_code = 400
             return {}
 
-        hashed_pw = USERS.get(username)
-        if hashed_pw and check_password(password, hashed_pw):
+        user = self.request.dbsession.query(User).filter_by(login=username).one_or_none()
+        if not user:
+            self.request.response.status_code = 400
+            return {}
+
+        if check_password(password, user.password):
             headers = remember(self.request, username)
             self.request.response.headerlist.extend(headers)
             return self.get_user_response(username)
