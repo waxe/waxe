@@ -141,11 +141,11 @@ def git_fetch(repo):
         return []
 
     if info.flags == info.FAST_FORWARD:
-        return _get_file_statuses(repo, info.old_commit, info.commit)
+        return _get_file_statuses(info.old_commit, info.commit)
 
     if info.flags == info.FORCED_UPDATE:
         # There was a git pull --force on the origin
-        return _get_file_statuses(repo, info.old_commit, info.commit)
+        return _get_file_statuses(info.old_commit, info.commit)
 
     # Other flags:
     # info.NEW_TAG
