@@ -15,7 +15,9 @@ from ..models import (
     get_session_factory,
     get_tm_session,
     )
-from ..models import MyModel
+from ..models import User
+
+from ..auth.security import hash_password
 
 
 def usage(argv):
@@ -23,6 +25,11 @@ def usage(argv):
     print('usage: %s <config_uri> [var=value]\n'
           '(example: "%s development.ini")' % (cmd, cmd))
     sys.exit(1)
+
+
+USERS = [
+    ('editor', 'editor', 'Editor', 'editor@lereskp.fr'),
+]
 
 
 def main(argv=sys.argv):
@@ -41,5 +48,6 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        model = MyModel(name='one', value=1)
-        dbsession.add(model)
+        for login, password, name, email in USERS:
+            user = User(login=login, password=hash_password(password), name=name, email=email)
+        dbsession.add(user)
