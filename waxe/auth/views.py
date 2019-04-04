@@ -46,7 +46,7 @@ class AuthView(object):
     @view_config(route_name='logout', request_method='OPTIONS')
     @view_config(route_name='login', request_method='OPTIONS')
     def options(self):
-        {}
+        return {}
 
     @view_config(route_name='login', request_method='POST')
     def login(self):
