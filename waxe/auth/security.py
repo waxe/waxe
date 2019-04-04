@@ -9,7 +9,7 @@ from pyramid.security import (
 class RootFactory(object):
     __acl__ = [
         (Allow, Authenticated, 'authenticated'),
-        (Allow, 'group:editors', ['edit']),
+        (Allow, 'role:edit', ['edit']),
     ]
 
     def __init__(self, request):
@@ -31,18 +31,13 @@ USERS = {
     'viewer': hash_password('viewer')
 }
 
-GROUPS = {
-    'editor': ['group:editors']
-}
-
 ROLES = {
     'editor': ['role:edit'],
 }
 
 
 def groupfinder(userid, request):
-    if userid in USERS:
-        return GROUPS.get(userid, [])
+    return ROLES.get(userid, [])
 
 
 def get_roles(userid):
