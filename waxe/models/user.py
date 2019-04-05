@@ -31,6 +31,9 @@ class User(Base):
                          secondary=user_role_table,
                          backref="users")
 
+    def get_commit_author(self):
+        return '%s <%s>' % (self.name, self.email)
+
 
 class Role(Base):
     __tablename__ = 'role'

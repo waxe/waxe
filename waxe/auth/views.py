@@ -40,9 +40,7 @@ class AuthView(object):
     @view_config(route_name='login', request_method='GET',
                  permission='authenticated')
     def get(self):
-        user = self.request.dbsession.query(User).get(
-            self.request.authenticated_userid)
-        return self.get_user_response(user)
+        return self.get_user_response(self.request.user)
 
     # TODO: only add this view in debug
     @view_config(route_name='logout', request_method='OPTIONS')
@@ -81,3 +79,10 @@ class AuthView(object):
 def includeme(config):
     config.add_route('login', '/api/0/auth/login')
     config.add_route('logout', '/api/0/auth/logout')
+
+    config.add_request_method(
+        lambda r: r.dbsession.query(User).get(
+            r.authenticated_userid),
+        'user',
+        reify=True
+    )
