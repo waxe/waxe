@@ -121,6 +121,10 @@ export class FileListComponent implements OnDestroy, OnInit {
       })).subscribe(() => this.fetch());
 
       this.keyDownSub = fromEvent(document, 'keydown').subscribe(event => {
+        // TODO: we should certainly do something more robust.
+        if (event.target['tagName'] === 'INPUT') {
+          return;
+        }
         const key = (event['key'] || event['which']);
         if (this.inputVisible) {
           if (key === 'Escape') {
