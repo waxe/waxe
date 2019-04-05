@@ -5,6 +5,8 @@ from pyramid.security import (
     Authenticated
 )
 
+from ..models import User
+
 
 class RootFactory(object):
     __acl__ = [
@@ -26,15 +28,6 @@ def check_password(pw, hashed_pw):
     return bcrypt.checkpw(pw.encode('utf8'), expected_hash)
 
 
-ROLES = {
-    'editor': ['role:edit'],
-}
-
-
 def groupfinder(userid, request):
-    return ROLES.get(userid, [])
-
-
-def get_roles(userid):
-    roles = ROLES.get(userid, [])
-    return [role.split(':')[-1] for role in roles]
+    user = request.dbsession.query(User).get(userid)
+    return ['role:%s' % r.name for r in user.roles]

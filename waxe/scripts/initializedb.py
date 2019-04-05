@@ -15,7 +15,7 @@ from ..models import (
     get_session_factory,
     get_tm_session,
     )
-from ..models import User
+from ..models import Role, User
 
 from ..auth.security import hash_password
 
@@ -29,6 +29,10 @@ def usage(argv):
 
 USERS = [
     ('editor', 'editor', 'Editor', 'editor@lereskp.fr'),
+]
+
+ROLES = [
+    'edit'
 ]
 
 
@@ -48,6 +52,13 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
+        for role_name in ROLES:
+            role = Role(name=role_name)
+            dbsession.add(role)
+
+        role = dbsession.query(Role).filter_by(name=ROLES[0]).one()
+
         for login, password, name, email in USERS:
             user = User(login=login, password=hash_password(password), name=name, email=email)
+            user.roles = [role]
         dbsession.add(user)
