@@ -13,7 +13,6 @@ from  ..models import User
 
 from .security import (
     check_password,
-    get_roles,
 )
 
 from pyramid.response import Response
@@ -32,16 +31,18 @@ class AuthView(object):
     def __init__(self, request):
         self.request = request
 
-    def get_user_response(self, userid):
+    def get_user_response(self, user):
         return {
-            'username': userid,
-            'roles': get_roles(userid),
+            'username': user.name,
+            'roles': [r.name for r in user.roles],
         }
 
     @view_config(route_name='login', request_method='GET',
                  permission='authenticated')
     def get(self):
-        return self.get_user_response(self.request.authenticated_userid)
+        user = self.request.dbsession.query(User).get(
+            self.request.authenticated_userid)
+        return self.get_user_response(user)
 
     # TODO: only add this view in debug
     @view_config(route_name='logout', request_method='OPTIONS')
@@ -63,9 +64,9 @@ class AuthView(object):
             return {}
 
         if check_password(password, user.password):
-            headers = remember(self.request, username)
+            headers = remember(self.request, user.user_id)
             self.request.response.headerlist.extend(headers)
-            return self.get_user_response(username)
+            return self.get_user_response(user)
 
         self.request.response.status_code = 400
         return {}
