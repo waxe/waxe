@@ -4,6 +4,7 @@ CHANGE_TYPE_DELETED = 'D'
 CHANGE_TYPE_MODIFIED = 'M'
 CHANGE_TYPE_RENAMED = 'R'
 CHANGE_TYPE_TYPE_CHANGED = 'T'
+CHANGE_TYPE_CONFLICTED = 'U'
 
 
 class FileStatus(object):
@@ -22,6 +23,9 @@ class FileStatus(object):
             'path': self.path,
             'old_path': self.old_path,
         }
+
+    def __hash__(self):
+        return hash((self.path, self.old_path, self.status))
 
     def __repr__(self):
         return str(self.__json__())
@@ -58,6 +62,10 @@ class FileStatus(object):
             assert diff.a_path == diff.b_path
             return FileStatus(CHANGE_TYPE_TYPE_CHANGED, diff.b_path)
 
+        if diff.change_type == CHANGE_TYPE_CONFLICTED:
+            assert diff.a_path == diff.b_path
+            return FileStatus(CHANGE_TYPE_CONFLICTED, diff.b_path)
+
         raise NotImplementedError(
                 'dif.change_type %s not supported.' % diff.change_type)
 
@@ -78,7 +86,17 @@ def git_status(repo):
         # TODO: better exception
         raise Exception('Status failed')
 
-    return lis
+    conflicted = set([fs for fs in lis
+                      if fs.status == CHANGE_TYPE_CONFLICTED])
+
+    conflicted_paths = [fs.path for fs in conflicted]
+
+    return (
+        list(conflicted) +
+        # A conflicted file can be in multiple diff so we need to make a filter
+        # here to only display once.
+        [fs for fs in lis if fs.path not in conflicted_paths]
+    )
 
 
 def _get_file_statuses(parent_commit, commit):
@@ -89,24 +107,70 @@ def _get_file_statuses(parent_commit, commit):
     return lis
 
 
-def git_pull(repo):
-    current_commit = repo.commit()
+def get_current_branch(repo):
+    try:
+        return repo.active_branch
+    except TypeError:
+        # Raised when the branch is
+        # detached
+        return None
 
+
+def git_fetch(repo):
     origin = repo.remotes.origin
-    res = origin.pull()
+    branch = get_current_branch(repo)
 
-    new_commit = repo.commit()
+    res = origin.fetch()
 
-    if current_commit == new_commit:
+    # Only get the info of the current branch from origin
+    info = next(r for r in res if r.name == '%s/%s' % (
+        origin.name, branch.name))
+
+    if info.flags == info.HEAD_UPTODATE:
+        # Already up to date
         return []
 
-    assert(len(res) == 1)
+    if info.flags == info.FAST_FORWARD:
+        return _get_file_statuses(repo, info.old_commit, info.commit)
 
-    for info in res:
-        if info.flags != info.HEAD_UPTODATE:
-            # TODO: nice exception
-            raise Exception()
-    return _get_file_statuses(current_commit, new_commit)
+    if info.flags == info.FORCED_UPDATE:
+        # There was a git pull --force on the origin
+        return _get_file_statuses(repo, info.old_commit, info.commit)
+
+    # Other flags:
+    # info.NEW_TAG
+    # info.NEW_HEAD
+    # info.REJECTED
+    # info.ERROR
+    raise NotImplementedError('Unsupported flags %i' % info.flags)
+
+
+def git_rebase(repo):
+    """
+    NOTE: we can use autostash=True but it doesn't work for old git client so
+    we do it manually.
+    """
+    def count_stash():
+        return len(repo.git.stash('list').split('\n'))
+
+    origin = repo.remotes.origin
+    current_branch = get_current_branch(repo)
+
+    before_cnt = count_stash()
+    repo.git.stash('save')
+    has_stash = count_stash() != before_cnt
+
+    repo.git.rebase('%s/%s' % (origin.name, current_branch.name))
+
+    if has_stash:
+        # TODO: can raise an exception on conflict
+        repo.git.stash('pop')
+
+
+def update_repo(repo):
+    file_statuses = git_fetch(repo)
+    git_rebase(repo)
+    return file_statuses
 
 
 def git_commit(repo, files, author):
@@ -126,4 +190,5 @@ def git_commit(repo, files, author):
 
     repo.git.commit(
         '-m', 'Update done by waxe website', author=author, *files)
-    repo.git.push('origin', 'master')
+    current_branch = get_current_branch(repo)
+    repo.git.push('origin', current_branch.name)
