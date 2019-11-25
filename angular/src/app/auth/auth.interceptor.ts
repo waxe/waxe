@@ -10,7 +10,7 @@ import {
 
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { _throw } from 'rxjs/observable/throw';
+import { throwError } from 'rxjs';
 
 import { UrlService } from '../url.service';
 
@@ -28,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
               this.router.navigate([this.urlService.URLS.auth.login]);
             }
           }
-          return _throw(response);
+          return throwError(response);
         })
       );
   }

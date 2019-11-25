@@ -10,7 +10,7 @@ import {
 
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { _throw } from 'rxjs/observable/throw';
+import { throwError } from 'rxjs';
 
 import { MessagesServive } from './messages/messages.service';
 
@@ -30,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               // perhaps we can stop the propagation
             }
           }
-          return _throw(response);
+          return throwError(response);
         })
       );
   }
