@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -54,6 +55,7 @@ const routes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(routes),
 
+    CKEditorModule,
     ContextMenuModule,
     MonacoEditorModule,
     NgbModule,

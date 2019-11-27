@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import * as InlineEditor from '@ckeditor/ckeditor5-build-inline';
+
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
@@ -15,12 +17,18 @@ import { MessagesServive } from '../../messages/messages.service';
     <div *ngFor="let entry of entries">
       <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
       <div [innerHTML]="entry.msgid"></div>
-      <textarea [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></textarea>
+      <ckeditor [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+        [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
     </div>
   </div>
   `
 })
 export class FileEditorPoComponent implements OnDestroy, OnInit {
+
+  HTMLEditor = InlineEditor;
+  HTMLEditorConfig = {
+    toolbar: [ 'bold', 'italic', 'underline', 'bulletedList' ]
+  };
 
   path: string;
   entries: Array<any>;
