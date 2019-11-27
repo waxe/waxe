@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import * as InlineEditor from '@ckeditor/ckeditor5-build-inline';
 
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 import { FileService } from '../file.service';
@@ -14,16 +14,29 @@ import { MessagesServive } from '../../messages/messages.service';
   template: `
   <breadcrumb [path]="path"></breadcrumb>
   <div class="no-overflow flex files-editor-po">
-    <div *ngFor="let entry of entries">
-      <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
-      <div [innerHTML]="entry.msgid"></div>
+    <div class="container-fluid" *ngIf="groupedEntries">
+      <div class="row">
+        <div class="col-sm-2" *ngIf="groupedEntries.length > 1">
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item" *ngFor="let group of groupedEntries">
+              <a class="nav-link" [class.active]="group.group_id === group_id"
+                [routerLink]="" queryParamsHandling="merge" [fragment]="group.group_id">{{ group.group_id }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="po-editor-container" [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
+          <div *ngFor="let entry of entries">
+            <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
+            <div [innerHTML]="entry.msgid"></div>
 
-      <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-        *ngIf="!entry.showCKEditor"></div>
+            <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
+              *ngIf="!entry.showCKEditor"></div>
 
-      <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
-        [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
-
+            <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   `
@@ -36,6 +49,8 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
   };
 
   path: string;
+  groupedEntries: Array<any>;
+  group_id: string;
   entries: Array<any>;
   textChanged: Subject<any> = new Subject<any>();
 
@@ -50,8 +65,9 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
 
 
   ngOnInit(): void {
-    this.routeSub = this.route.queryParams.pipe(
-      switchMap((params) => {
+    this.routeSub = combineLatest(this.route.queryParams, this.route.fragment).pipe(
+      switchMap(([params, fragment]) => {
+        this.group_id = fragment;
         return this.fileService.getPo(params['path']).pipe(
           map(res => {
             this.path = params['path'];
@@ -60,8 +76,16 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
         );
       })
     )
-    .subscribe((entries: Array<any>) => {
-      this.entries = entries;
+    .subscribe((groupedEntries: Array<any>) => {
+      this.groupedEntries = groupedEntries;
+      if (this.groupedEntries.length) {
+        if (! this.group_id) {
+          this.group_id = groupedEntries[0].group_id;
+        }
+        const group = groupedEntries.filter(dict => dict.group_id === this.group_id);
+        // TODO: what to do if no entries
+        this.entries = group[0].entries;
+      }
     });
 
     this.textChangedSub = this.textChanged.pipe(

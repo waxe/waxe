@@ -2,6 +2,7 @@ import base64
 import json
 import hashlib
 import os
+from paste.util.import_string import eval_import
 import polib
 import re
 import pyramid.httpexceptions as exc
@@ -31,6 +32,15 @@ class PoGetFileView(BaseGetView):
         if not os.path.isfile(self.abspath):
             raise exc.HTTPNotFound()
 
+        def group_po_entries(entries):
+            func_str = self.request.registry.settings.get('group_po_entries')
+            if func_str:
+                return eval_import(func_str)(entries)
+            return [{
+                'group_id': None,
+                'entries': entries,
+            }]
+
         po = polib.pofile(self.abspath)
         entries = []
         for entry in po:
@@ -39,8 +49,9 @@ class PoGetFileView(BaseGetView):
                 'msgctxt': entry.msgctxt,
                 'msgid': entry.msgid,
                 'msgstr': entry.msgstr,
+                'tcomment': entry.tcomment,
             })
-        return entries
+        return group_po_entries(entries)
 
 
 class PoPostFileView(BasePostView):
