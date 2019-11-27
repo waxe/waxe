@@ -17,8 +17,13 @@ import { MessagesServive } from '../../messages/messages.service';
     <div *ngFor="let entry of entries">
       <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
       <div [innerHTML]="entry.msgid"></div>
-      <ckeditor [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+
+      <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
+        *ngIf="!entry.showCKEditor"></div>
+
+      <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
         [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
+
     </div>
   </div>
   `
