@@ -52,7 +52,7 @@ def main(global_config, **settings):
     config.include('pyramid_jinja2')
     config.include('.models')
     config.include('.routes')
-    config.include('.filemanager.views')
+    config.include('.filemanager.views.default')
     config.include('.versioning.views')
     config.include('.auth.views')
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)
