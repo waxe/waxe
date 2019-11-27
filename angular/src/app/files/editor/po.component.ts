@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import * as InlineEditor from '@ckeditor/ckeditor5-build-inline';
@@ -24,7 +24,8 @@ import { MessagesServive } from '../../messages/messages.service';
             </li>
           </ul>
         </div>
-        <div class="po-editor-container" [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
+        <div #poEditorContainer class="po-editor-container"
+          [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
           <div *ngFor="let entry of entries">
             <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
             <div [innerHTML]="entry.msgid"></div>
@@ -42,6 +43,7 @@ import { MessagesServive } from '../../messages/messages.service';
   `
 })
 export class FileEditorPoComponent implements OnDestroy, OnInit {
+  @ViewChild('poEditorContainer') poEditorContainer;
 
   HTMLEditor = InlineEditor;
   HTMLEditorConfig = {
@@ -85,6 +87,10 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
         const group = groupedEntries.filter(dict => dict.group_id === this.group_id);
         // TODO: what to do if no entries
         this.entries = group[0].entries;
+        if (this.poEditorContainer) {
+          // On the first load the ViewChild is not loaded
+          this.poEditorContainer.nativeElement.scrollTop = 0;
+        }
       }
     });
 
