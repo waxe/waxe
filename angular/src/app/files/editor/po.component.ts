@@ -26,7 +26,7 @@ import { MessagesServive } from '../../messages/messages.service';
         </div>
         <div #poEditorContainer class="po-editor-container"
           [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
-          <div *ngFor="let entry of entries">
+          <div *ngFor="let entry of entries" class="po-entry">
             <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
             <div [innerHTML]="entry.msgid"></div>
 
