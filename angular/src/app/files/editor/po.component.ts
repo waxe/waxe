@@ -31,7 +31,7 @@ import { MessagesServive } from '../../messages/messages.service';
             <div [innerHTML]="entry.msgid"></div>
 
             <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-              *ngIf="!entry.showCKEditor"></div>
+              *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
 
             <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
               [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>

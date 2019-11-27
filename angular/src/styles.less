@@ -166,4 +166,26 @@ waxe-file {
 .po-editor-container {
   overflow-y: auto;
   height: calc(~"100vh - 120px");
+
+  .po-editor-div-translation,
+  .ck-content.ck-editor__editable {
+      border: 1px solid #CCC;
+  }
+
+  .po-editor-div-translation {
+    // NOTE; we need to put the padding here since we don't always have a <p>
+    // in the translation
+    padding: 14px 9.60px;
+    p {
+      padding: 14px 0;
+      margin: 0;
+
+      &:first-of-type {
+        padding-top: 0;
+      }
+      &:last-of-type {
+        padding-bottom: 0;
+      }
+    }
+  }
 }
