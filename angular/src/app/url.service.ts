@@ -5,6 +5,7 @@ export const URLS: any = {
   'files': {
     'list': '',
     'view': '/edit/txt',
+    'po': '/edit/po',
   },
   'versioning': {
     'status': '/versioning',
@@ -28,6 +29,7 @@ export const API_URLS: any = {
       'rename': `${PATH}/api/0/files/rename`,
       'copy': `${PATH}/api/0/files/copy`,
       'move': `${PATH}/api/0/files/move`,
+      'po': `${PATH}/api/0/files/t/po`,
   },
   'versioning': {
     'status': `${PATH}/api/0/versioning`,

@@ -17,6 +17,7 @@ import { VersioningCheckGuard } from '../versioning/check.guard';
 import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
+import { FileEditorPoComponent } from './editor/po.component';
 import { FileListComponent } from './file-list.component';
 import { CreateFileModalComponent } from './create-file-modal.component';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
@@ -36,6 +37,11 @@ const routes: Routes = [
   {
     path: 'edit/txt',
     component: FileEditorComponent,
+    canActivate: [AuthGuard, VersioningCheckGuard],
+  },
+  {
+    path: 'edit/po',
+    component: FileEditorPoComponent,
     canActivate: [AuthGuard, VersioningCheckGuard],
   },
 ];
@@ -58,6 +64,7 @@ const routes: Routes = [
   declarations: [
     FileComponent,
     FileEditorComponent,
+    FileEditorPoComponent,
     FileListComponent,
     CreateFileModalComponent,
     CreateFolderModalComponent,

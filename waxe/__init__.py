@@ -53,6 +53,7 @@ def main(global_config, **settings):
     config.include('.models')
     config.include('.routes')
     config.include('.filemanager.views.default')
+    config.include('.filemanager.views.po')
     config.include('.versioning.views')
     config.include('.auth.views')
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)
