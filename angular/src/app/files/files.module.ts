@@ -25,6 +25,7 @@ import { CreateFolderModalComponent } from './create-folder-modal.component';
 import { FileRenameModalComponent } from './file-rename-modal.component';
 import { FileSelectionService } from './file-selection.service';
 import { FileService } from './file.service';
+import { SocketService } from './socket.service';
 
 import { MouseSelectionDirective, MouseSelectableDirective } from './file-mouse-selection.directive';
 
@@ -79,6 +80,7 @@ const routes: Routes = [
     FileBufferService,
     FileSelectionService,
     FileService,
+    SocketService,
   ],
   entryComponents: [
     CreateFileModalComponent,

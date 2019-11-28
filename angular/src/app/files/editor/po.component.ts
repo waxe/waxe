@@ -11,6 +11,8 @@ import { FileService } from '../file.service';
 import { MessagesServive } from '../../messages/messages.service';
 import { StatusService } from '../../header/status.service';
 
+import { SocketService } from '../socket.service';
+
 
 @Component({
   template: `
@@ -36,10 +38,12 @@ import { StatusService } from '../../header/status.service';
             <div [innerHTML]="entry.msgid"></div>
 
             <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-              *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
+              *ngIf="!entry.showCKEditor" class="po-editor-div-translation" [class.disabled]="entry.isLocked"></div>
 
             <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
-              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
+              [disabled]="entry.isLocked" [class.disabled]="entry.isLocked"
+              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"
+              (focus)="getLock(entry)" (blur)="releaseLock(entry)"></ckeditor>
           </div>
         </div>
       </div>
@@ -65,30 +69,69 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
 
   private routeSub: Subscription;
   private textChangedSub: Subscription;
+  private lockChangeSub: Subscription;
+  private objChangeSub: Subscription;
 
   constructor(
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
     private fileService: FileService,
     private messagesService: MessagesServive,
+    private socketService: SocketService,
     private statusService: StatusService,
   ) {}
 
 
   ngOnInit(): void {
+    this.socketService.initSocket();
+
+    this.lockChangeSub = this.socketService.onLockChange().subscribe((lockData: any) => {
+      if (!this.groupedEntries) {
+        // We didn't get the entries from the API
+        return;
+      }
+      this.groupedEntries.map((dict: any) => {
+        dict.entries.map((entry) => {
+          if (entry.id === lockData.id) {
+            entry.isLocked = lockData.status;
+            return;
+          }
+        });
+      });
+    });
+
+    this.objChangeSub = this.socketService.onObjectChange().subscribe((entryData: any) => {
+      // TODO: we should use the same subscription for onLockChange &
+      // onObjectChange and merge the object properly
+      if (!this.groupedEntries) {
+        // We didn't get the entries from the API
+        return;
+      }
+      this.groupedEntries.map((dict: any) => {
+        dict.entries.map((entry) => {
+          if (entry.id === entryData.id) {
+            // TODO: we should merge the entry
+            entry.msgstr = entryData.msgstr;
+            return;
+          }
+        });
+      });
+    });
+
     this.routeSub = combineLatest(this.route.queryParams, this.route.fragment).pipe(
       switchMap(([params, fragment]) => {
         this.loading = true;
         this.group_id = fragment;
-        return this.fileService.getPo(params['path']).pipe(
-          map(res => {
-            this.path = params['path'];
-            return res;
-          })
+        const previousPath = this.path;
+        this.path = params['path'];
+
+        return this.socketService.enterRoom(this.path, previousPath).pipe(
+          switchMap(() => this.fileService.getPo(this.path))
         );
       })
     )
     .subscribe((groupedEntries: Array<any>) => {
+
       this.groupedEntries = groupedEntries;
       if (this.groupedEntries.length) {
         if (! this.group_id) {
@@ -121,6 +164,7 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
       this.loading = true;
       this.statusService.setLoading();
       this.fileService.updatePo(this.path, entry).subscribe(() => {
+        this.socketService.objectChange(this.path, entry);
         this.loading = false;
         this.statusService.setSaved();
       });
@@ -133,8 +177,23 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
     this.textChanged.next([entry.msgstr, entry]);
   }
 
+  getLock(entry: any) {
+    this.socketService.getLock(this.path, entry.id).subscribe((v) => {
+      entry.isLocked = !v;
+    });
+  }
+
+  releaseLock(entry: any) {
+    this.socketService.releaseLock(this.path, entry.id).subscribe((v) => {
+      entry.isLocked = !v;
+    });
+  }
+
   ngOnDestroy() {
     this.routeSub.unsubscribe();
     this.textChangedSub.unsubscribe();
+    this.lockChangeSub.unsubscribe();
+    this.objChangeSub.unsubscribe();
+    this.socketService.leaveRoom(this.path).subscribe();
   }
 }
