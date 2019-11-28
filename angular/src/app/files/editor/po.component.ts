@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import * as InlineEditor from '@ckeditor/ckeditor5-build-inline';
 
@@ -24,17 +25,23 @@ import { MessagesServive } from '../../messages/messages.service';
             </li>
           </ul>
         </div>
-        <div #poEditorContainer class="po-editor-container"
+        <div class="po-editor-container"
           [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
-          <div *ngFor="let entry of entries" class="po-entry">
-            <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
-            <div [innerHTML]="entry.msgid"></div>
+          <div class="po-viewer" *ngIf="iframeUrl">
+            <h4 class="text-center" *ngIf="loading">Loading...</h4>
+            <iframe #iframe [src]="iframeUrl" frameborder="0" width="100%" height="400" *ngIf="!loading"></iframe>
+          </div>
+          <div #poEditorContainer class="po-entries">
+            <div *ngFor="let entry of entries" class="po-entry">
+              <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
+              <div [innerHTML]="entry.msgid"></div>
 
-            <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-              *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
+              <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
+                *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
 
-            <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
-              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
+              <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+                [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
+            </div>
           </div>
         </div>
       </div>
@@ -55,11 +62,14 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
   group_id: string;
   entries: Array<any>;
   textChanged: Subject<any> = new Subject<any>();
+  iframeUrl = null;
+  loading = false;
 
   private routeSub: Subscription;
   private textChangedSub: Subscription;
 
   constructor(
+    private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
     private fileService: FileService,
     private messagesService: MessagesServive,
@@ -69,6 +79,7 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
   ngOnInit(): void {
     this.routeSub = combineLatest(this.route.queryParams, this.route.fragment).pipe(
       switchMap(([params, fragment]) => {
+        this.loading = true;
         this.group_id = fragment;
         return this.fileService.getPo(params['path']).pipe(
           map(res => {
@@ -84,9 +95,13 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
         if (! this.group_id) {
           this.group_id = groupedEntries[0].group_id;
         }
-        const group = groupedEntries.filter(dict => dict.group_id === this.group_id);
+        const groups = groupedEntries.filter(dict => dict.group_id === this.group_id);
         // TODO: what to do if no entries
-        this.entries = group[0].entries;
+        this.entries = groups[0].entries;
+        if (groups[0].viewer_url) {
+          this.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(groups[0].viewer_url);
+          this.loading = false;
+        }
         if (this.poEditorContainer) {
           // On the first load the ViewChild is not loaded
           this.poEditorContainer.nativeElement.scrollTop = 0;
@@ -98,7 +113,9 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(([msgstr, entry]) => {
+      this.loading = true;
       this.fileService.updatePo(this.path, entry).subscribe(() => {
+        this.loading = false;
         this.messagesService.add({
           type: 'success',
           txt: 'Saved!',

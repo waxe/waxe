@@ -32,12 +32,20 @@ class PoGetFileView(BaseGetView):
         if not os.path.isfile(self.abspath):
             raise exc.HTTPNotFound()
 
+        def viewer_url_func(group_id):
+            url = self.request.registry.settings.get('po_viewer_url')
+            if not url:
+                return None
+            return url.format(path=self.relpath, group_id=group_id or '')
+
         def group_po_entries(entries):
             func_str = self.request.registry.settings.get('group_po_entries')
             if func_str:
-                return eval_import(func_str)(entries)
+                return eval_import(func_str)(entries, viewer_url_func)
+            group_id = None
             return [{
-                'group_id': None,
+                'group_id': group_id,
+                'viewer_url': viewer_url_func(group_id),
                 'entries': entries,
             }]
 

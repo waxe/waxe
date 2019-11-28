@@ -35,6 +35,7 @@ class BaseGetView(BaseView):
             self.abspath = absolute_path(self.root_path, path)
         except IOError:
             raise exc.HTTPNotFound()
+        self.relpath = path
 
 
 class BasePostView(BaseView):
@@ -46,3 +47,4 @@ class BasePostView(BaseView):
             self.abspath = absolute_path(self.root_path, path)
         except IOError:
             raise exc.HTTPNotFound()
+        self.relpath = path

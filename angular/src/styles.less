@@ -164,8 +164,6 @@ waxe-file {
 }
 
 .po-editor-container {
-  overflow-y: auto;
-  height: calc(~"100vh - 120px");
 
   .po-editor-div-translation,
   .ck-content.ck-editor__editable {
@@ -189,9 +187,21 @@ waxe-file {
     }
   }
 
+  .po-viewer {
+    border: 1px solid black;
+    height: 402px;
+  }
+
+  .po-entries {
+    margin-top: 10px;
+    overflow-y: auto;
+    height: calc(~"100vh - 540px");
+  }
+
   .po-entry {
     margin-bottom: 30px;
     border: 1px solid #CCC;
     padding: 15px;
   }
+
 }
