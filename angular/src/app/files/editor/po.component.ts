@@ -95,7 +95,13 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
         if (! this.group_id) {
           this.group_id = groupedEntries[0].group_id;
         }
-        const groups = groupedEntries.filter(dict => dict.group_id === this.group_id);
+        let groups = groupedEntries.filter(dict => dict.group_id === this.group_id);
+        if (!groups.length) {
+          // The group doesn't exist, get the first one.
+          // TODO: support empty po
+          this.group_id = groupedEntries[0].group_id;
+          groups = [groupedEntries[0]];
+        }
         // TODO: what to do if no entries
         this.entries = groups[0].entries;
         if (groups[0].viewer_url) {
