@@ -14,34 +14,31 @@ import { MessagesServive } from '../../messages/messages.service';
 @Component({
   template: `
   <breadcrumb [path]="path"></breadcrumb>
-  <div class="no-overflow flex files-editor-po">
-    <div class="container-fluid" *ngIf="groupedEntries">
-      <div class="row">
-        <div class="col-sm-2" *ngIf="groupedEntries.length > 1">
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item" *ngFor="let group of groupedEntries">
-              <a class="nav-link" [class.active]="group.group_id === group_id"
-                [routerLink]="" queryParamsHandling="merge" [fragment]="group.group_id">{{ group.group_id }}</a>
-            </li>
-          </ul>
+  <div class="no-overflow flex files-editor-po" *ngIf="groupedEntries">
+    <div class="flex flex-row">
+      <div class="files-editor-sidebar" *ngIf="groupedEntries.length > 1">
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item" *ngFor="let group of groupedEntries">
+            <a class="nav-link" [class.active]="group.group_id === group_id"
+              [routerLink]="" queryParamsHandling="merge" [fragment]="group.group_id">{{ group.group_id }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="po-editor-container">
+        <div class="po-viewer" *ngIf="iframeUrl">
+          <h4 class="text-center" *ngIf="loading">Loading...</h4>
+          <iframe #iframe [src]="iframeUrl" frameborder="0" width="100%" height="100%" *ngIf="!loading"></iframe>
         </div>
-        <div class="po-editor-container"
-          [class.col-sm-10]="groupedEntries.length > 1" [class.col-sm-12]="groupedEntries.length < 2">
-          <div class="po-viewer" *ngIf="iframeUrl">
-            <h4 class="text-center" *ngIf="loading">Loading...</h4>
-            <iframe #iframe [src]="iframeUrl" frameborder="0" width="100%" height="400" *ngIf="!loading"></iframe>
-          </div>
-          <div #poEditorContainer class="po-entries">
-            <div *ngFor="let entry of entries" class="po-entry">
-              <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
-              <div [innerHTML]="entry.msgid"></div>
+        <div #poEditorContainer class="po-entries">
+          <div *ngFor="let entry of entries" class="po-entry">
+            <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
+            <div [innerHTML]="entry.msgid"></div>
 
-              <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-                *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
+            <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
+              *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
 
-              <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
-                [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
-            </div>
+            <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"></ckeditor>
           </div>
         </div>
       </div>
