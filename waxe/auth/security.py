@@ -1,4 +1,6 @@
 import bcrypt
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.security import (
     Everyone,
     Allow,
@@ -31,3 +33,13 @@ def check_password(pw, hashed_pw):
 def groupfinder(userid, request):
     user = request.dbsession.query(User).get(userid)
     return ['role:%s' % r.name for r in user.roles]
+
+
+def includeme(config):
+    settings = config.get_settings()
+    authn_policy = AuthTktAuthenticationPolicy(
+        settings['auth.secret'], callback=groupfinder,
+        hashalg='sha512')
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)

@@ -7,7 +7,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 
 from git import GitCommandError
 
-from auth.security import RootFactory, groupfinder
+from auth.security import RootFactory
 
 
 # Allow cross origin in dev
@@ -40,15 +40,7 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     config = Configurator(settings=settings, root_factory=RootFactory)
-
-    # Security policies
-    authn_policy = AuthTktAuthenticationPolicy(
-        settings['auth.secret'], callback=groupfinder,
-        hashalg='sha512')
-    authz_policy = ACLAuthorizationPolicy()
-    config.set_authentication_policy(authn_policy)
-    config.set_authorization_policy(authz_policy)
-
+    config.include('.auth.security')
     config.include('pyramid_jinja2')
     config.include('.models')
     config.include('.routes')
