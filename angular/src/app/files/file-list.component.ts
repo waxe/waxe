@@ -85,6 +85,7 @@ export class FileListComponent implements OnDestroy, OnInit {
   keyDownSub: Subscription;
 
   inputVisible = false;
+  inputEnabled = true;
 
   public model: any;
 
@@ -121,6 +122,9 @@ export class FileListComponent implements OnDestroy, OnInit {
       })).subscribe(() => this.fetch());
 
       this.keyDownSub = fromEvent(document, 'keydown').subscribe(event => {
+        if (!this.inputEnabled) {
+          return;
+        }
         const key = (event['key'] || event['which']);
         if (this.inputVisible) {
           if (key === 'Escape') {
@@ -199,26 +203,36 @@ export class FileListComponent implements OnDestroy, OnInit {
   }
 
   createFolder(): void {
+    this.inputEnabled = false;
     const modalRef = this.modalService.open(CreateFolderModalComponent);
     modalRef.componentInstance.path = this.path;
-    modalRef.result.then(() => this.fetch());
+    modalRef.result.then(() => {
+      this.inputEnabled = true;
+      this.fetch();
+    }).catch(() => this.inputEnabled = true);
   }
 
   createFile(): void {
+    this.inputEnabled = false;
     const modalRef = this.modalService.open(CreateFileModalComponent);
     modalRef.componentInstance.path = this.path;
     // TODO: open the created file?
-    modalRef.result.then(() => this.fetch());
+    modalRef.result.then(() => {
+      this.inputEnabled = true;
+      this.fetch();
+    }).catch(() => this.inputEnabled = true);
   }
 
   rename(file: File): void {
+    this.inputEnabled = false;
     const modalRef = this.modalService.open(FileRenameModalComponent);
     modalRef.componentInstance.file = file;
     modalRef.result.then(() => {
+      this.inputEnabled = true;
       this.fetch();
       // Since we use the file path we can't copy/paste a renamed file
       this.fileBufferService.reset();
-    });
+    }).catch(() => this.inputEnabled = true);
   }
 
   remove(): void {
