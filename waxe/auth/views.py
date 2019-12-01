@@ -12,7 +12,7 @@ from pyramid.view import (
 from  ..models import User
 
 from .security import (
-    check_password,
+    check_user,
 )
 
 from pyramid.response import Response
@@ -56,18 +56,14 @@ class AuthView(object):
             self.request.response.status_code = 400
             return {}
 
-        user = self.request.dbsession.query(User).filter_by(login=username).one_or_none()
+        user = check_user(self.request, username, password)
         if not user:
             self.request.response.status_code = 400
             return {}
 
-        if check_password(password, user.password):
-            headers = remember(self.request, user.user_id)
-            self.request.response.headerlist.extend(headers)
-            return self.get_user_response(user)
-
-        self.request.response.status_code = 400
-        return {}
+        headers = remember(self.request, user.user_id)
+        self.request.response.headerlist.extend(headers)
+        return self.get_user_response(user)
 
     @view_config(route_name='logout', request_method='POST')
     def logout(self):

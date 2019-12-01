@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    Boolean,
     Column,
     ForeignKey,
     Integer,
@@ -23,9 +24,10 @@ class User(Base):
     __tablename__ = 'user'
     user_id = Column(Integer, primary_key=True)
     login = Column(Text)
-    password = Column(Text)
-    name = Column(Text)
-    email = Column(Text)
+    password = Column(Text, nullable=True)
+    name = Column(Text, nullable=True)
+    email = Column(Text, nullable=True)
+    is_ldap_user = Column(Boolean, default=False)
 
     roles = relationship("Role",
                          secondary=user_role_table,
