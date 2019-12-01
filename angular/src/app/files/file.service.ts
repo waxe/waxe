@@ -54,7 +54,6 @@ export class FileService {
       );
   }
 
-
   update(path: string, source: string): Observable<string> {
     const data: string = JSON.stringify({
       'path': path,
@@ -64,7 +63,6 @@ export class FileService {
     return this.http
       .put<string>(this.urlService.API_URLS.files.list, data);
   }
-
 
   createFolder(path: string, name: string): Observable<{}> {
     const data: string = JSON.stringify({
@@ -149,7 +147,30 @@ export class FileService {
     if (file.type === 'folder') {
       this.router.navigate([this.urlService.URLS.files.list], {queryParams: {path: file.path}});
     } else {
-      this.router.navigate([this.urlService.URLS.files.view], {queryParams: {path: file.path}});
+      const ext = file.path.split('.').pop();
+      if (ext === 'po') {
+        this.router.navigate([this.urlService.URLS.files.po], {queryParams: {path: file.path}});
+      } else {
+        this.router.navigate([this.urlService.URLS.files.view], {queryParams: {path: file.path}});
+      }
     }
+  }
+
+  getPo(path: string): Observable<Array<any>> {
+    const params = new HttpParams().set('path', path);
+    return this.http
+      .get(this.urlService.API_URLS.files.po, {params}).pipe(
+        map(res => res as Array<any>)
+      );
+  }
+
+  updatePo(path: string, entry: any): Observable<string> {
+    const reqData: string = JSON.stringify({
+      'path': path,
+      'entry': entry,
+    });
+
+    return this.http
+      .put<string>(this.urlService.API_URLS.files.po, reqData);
   }
 }

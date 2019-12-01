@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +18,7 @@ import { VersioningCheckGuard } from '../versioning/check.guard';
 import { FileBufferService } from './file-buffer.service';
 import { FileComponent } from './file.component';
 import { FileEditorComponent } from './file-editor.component';
+import { FileEditorPoComponent } from './editor/po.component';
 import { FileListComponent } from './file-list.component';
 import { CreateFileModalComponent } from './create-file-modal.component';
 import { CreateFolderModalComponent } from './create-folder-modal.component';
@@ -38,6 +40,11 @@ const routes: Routes = [
     component: FileEditorComponent,
     canActivate: [AuthGuard, VersioningCheckGuard],
   },
+  {
+    path: 'edit/po',
+    component: FileEditorPoComponent,
+    canActivate: [AuthGuard, VersioningCheckGuard],
+  },
 ];
 
 
@@ -48,6 +55,7 @@ const routes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(routes),
 
+    CKEditorModule,
     ContextMenuModule,
     MonacoEditorModule,
     NgbModule,
@@ -58,6 +66,7 @@ const routes: Routes = [
   declarations: [
     FileComponent,
     FileEditorComponent,
+    FileEditorPoComponent,
     FileListComponent,
     CreateFileModalComponent,
     CreateFolderModalComponent,

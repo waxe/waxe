@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 
@@ -24,11 +24,11 @@ export class LoginComponent {
   public username: string;
   public password: string;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
 
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe((res) => {
-      this.router.navigate(['/']);
+      this.router.navigateByUrl(this.route.snapshot.queryParams.next || '/');
     });
   }
 }

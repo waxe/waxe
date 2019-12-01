@@ -162,3 +162,56 @@ waxe-file {
 .search-input-container {
   position: relative;
 }
+
+.po-editor-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: calc(~"100vh - 120px");
+
+  .po-editor-div-translation,
+  .ck-content.ck-editor__editable {
+      border: 1px solid #CCC;
+  }
+
+  .po-editor-div-translation {
+    // NOTE; we need to put the padding here since we don't always have a <p>
+    // in the translation
+    padding: 14px 9.60px;
+    p {
+      padding: 14px 0;
+      margin: 0;
+
+      &:first-of-type {
+        padding-top: 0;
+      }
+      &:last-of-type {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  .po-viewer {
+    border: 1px solid black;
+    resize: vertical;
+    overflow: hidden;
+    padding-bottom: 15px;
+  }
+
+  .po-entries {
+    flex: 1;
+    margin-top: 10px;
+    overflow-y: auto;
+  }
+
+  .po-entry {
+    margin-bottom: 30px;
+    border: 1px solid #CCC;
+    padding: 15px;
+  }
+}
+
+.files-editor-sidebar {
+  margin-left: 15px;
+  margin-right: 15px;
+}

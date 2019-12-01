@@ -20,6 +20,7 @@ requires = [
     'gitpython',
     'bcrypt',
     'paste',
+    'polib',
     ]
 
 tests_require = [

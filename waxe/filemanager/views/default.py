@@ -3,45 +3,17 @@ import os
 from paste.util.import_string import eval_import
 import shutil
 
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from .files import (
-    absolute_path,
-    cleanup_path,
+from .base import BaseGetView, BasePostView
+from ..files import (
     copytree,
     get_folders_and_files,
-    relative_path,
 )
 
 
-@view_defaults(renderer='json', permission='edit')
-class BaseView(object):
-
-    def __init__(self, request):
-        self.request = request
-        self.root_path = self.request.registry.settings['root_path']
-
-    def path_to_relpath(self, path):
-        """Transform the given path in relative path
-        """
-        return relative_path(self.root_path, path)
-
-    def remove_abspath(self, s):
-        """In the error message we don't want to display the absolute path
-        """
-        return cleanup_path(self.root_path, s)
-
-
-class FilesView(BaseView):
-
-    def __init__(self, request):
-        super(FilesView, self).__init__(request)
-        path = self.request.GET.get('path', '')
-        try:
-            self.abspath = absolute_path(self.root_path, path)
-        except IOError:
-            raise exc.HTTPNotFound()
+class FilesView(BaseGetView):
 
     # TODO: remove OPTIONS for production
     # OPTIONS is called when there is a cross domain
@@ -109,15 +81,7 @@ class FilesView(BaseView):
         }
 
 
-class FilesPostView(BaseView):
-
-    def __init__(self, request):
-        super(FilesPostView, self).__init__(request)
-        path = self.request.json_body.get('path') or ''
-        try:
-            self.abspath = absolute_path(self.root_path, path)
-        except IOError:
-            raise exc.HTTPNotFound()
+class FilesPostView(BasePostView):
 
     @view_config(route_name='files', request_method='PUT')
     def update(self):
