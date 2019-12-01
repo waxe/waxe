@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   HttpInterceptor,
@@ -18,14 +19,14 @@ import { UrlService } from '../url.service';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router, private urlService: UrlService) {}
+  constructor(private router: Router, private location: Location, private urlService: UrlService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
       return next.handle(request).pipe(
         catchError(response => {
           if (response instanceof HttpErrorResponse) {
             if (response.status === 403) {
-              this.router.navigate([this.urlService.URLS.auth.login]);
+              this.router.navigate([this.urlService.URLS.auth.login], {queryParams: {'next': this.location.path()}});
             }
           }
           return throwError(response);
