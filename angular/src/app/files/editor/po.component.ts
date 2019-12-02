@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operato
 
 import { FileService } from '../file.service';
 import { MessagesServive } from '../../messages/messages.service';
+import { StatusService } from '../../header/status.service';
 
 
 @Component({
@@ -70,6 +71,7 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private fileService: FileService,
     private messagesService: MessagesServive,
+    private statusService: StatusService,
   ) {}
 
 
@@ -117,12 +119,10 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
       distinctUntilChanged()
     ).subscribe(([msgstr, entry]) => {
       this.loading = true;
+      this.statusService.setLoading();
       this.fileService.updatePo(this.path, entry).subscribe(() => {
         this.loading = false;
-        this.messagesService.add({
-          type: 'success',
-          txt: 'Saved!',
-        });
+        this.statusService.setSaved();
       });
     });
   }

@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { FileService } from './file.service';
 import { MessagesServive } from '../messages/messages.service';
+import { StatusService } from '../header/status.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class FileEditorComponent implements OnDestroy, OnInit {
   constructor(
     private route: ActivatedRoute,
     private fileService: FileService,
-    private messagesService: MessagesServive
+    private messagesService: MessagesServive,
+    private statusService: StatusService,
   ) {}
 
   ngOnInit(): void {
@@ -56,11 +58,9 @@ export class FileEditorComponent implements OnDestroy, OnInit {
         debounceTime(500),
         distinctUntilChanged(),
       ).subscribe(text => {
+          this.statusService.setLoading();
           this.fileService.update(this.path, text).subscribe(() => {
-            this.messagesService.add({
-              type: 'success',
-              txt: 'Saved!',
-            });
+            this.statusService.setSaved();
           });
         });
   }

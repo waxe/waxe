@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { ErrorInterceptor } from './error.interceptor';
 import { FilesModule } from './files/files.module';
+import { StatusService } from './header/status.service';
 import { VersioningModule } from './versioning/versioning.module';
 import { UrlService } from './url.service';
 
@@ -45,6 +46,7 @@ import { MessagesServive } from './messages/messages.service';
     MessagesComponent,
   ],
   providers: [
+    StatusService,
     UrlService,
     MessagesServive,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
