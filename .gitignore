@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+env27/
 build/
 develop-eggs/
 dist/
@@ -90,3 +91,5 @@ ENV/
 
 # sqlite file
 waxe.sqlite
+
+.mypy_cache/
