@@ -1,44 +1,49 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" [routerLink]="['/']">Waxe</a>
-  <ul class="navbar-nav mr-auto" *ngIf="authService.loggedUser">
-    <li class="nav-item dropdown" ngbDropdown>
-      <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-        Versioning
-      </a>
-      <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
-        <a class="dropdown-item" [routerLink]="urlService.URLS.versioning.status">Status</a>
-        <a class="dropdown-item" [routerLink]="urlService.URLS.versioning.update">Update</a>
-      </div>
-    </li>
-    <li class="nav-item dropdown" ngbDropdown *ngIf="data.branches && data.branches.length > 1">
-      <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-        {{ data.current }}
-      </a>
-      <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
-        <a class="dropdown-item" (click)="switchBranch(b)" *ngFor="let b of data.branches" [class.active]="b === data.current" >{{ b }}</a>
-      </div>
-    </li>
-  </ul>
-  <ul class="navbar-nav ml-auto">
-    <li class="nav-item">
-      <span class="nav-link">
-        <i class="fa fa-spinner fa-spin" *ngIf="statusService.loading" title="Loading!"></i>
-        <i class="fa fa-check" *ngIf="statusService.saved" title="Saved!"></i>
-      </span>
-    </li>
-    <li class="nav-item dropdown" *ngIf="urlService.previewUrl && fileService.currentPath">
-      <a class="nav-link" [href]="urlService.previewUrl + fileService.currentPath" target="_preview">Preview</a>
-    </li>
-    <li class="nav-item dropdown" ngbDropdown  *ngIf="authService.loggedUser">
-      <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-        {{ authService.loggedUser.username }}
-      </a>
-      <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
-        <a class="dropdown-item" (click)="logout()">Logout</a>
-      </div>
-    </li>
-  </ul>
-</nav>
-<waxe-messages></waxe-messages>
-<router-outlet></router-outlet>
-<ng-template ngbModalContainer></ng-template>
+<div [class.waxe-locked]="!socketService.connected">
+  <div class="waxe-overlay">
+    <div>Something went wrong please contact your administrator (socket connection lost).</div>
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" [routerLink]="['/']">Waxe</a>
+    <ul class="navbar-nav mr-auto" *ngIf="authService.loggedUser">
+      <li class="nav-item dropdown" ngbDropdown>
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+          Versioning
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
+          <a class="dropdown-item" [routerLink]="urlService.URLS.versioning.status">Status</a>
+          <a class="dropdown-item" [routerLink]="urlService.URLS.versioning.update">Update</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" ngbDropdown *ngIf="data.branches && data.branches.length > 1">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+          {{ data.current }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
+          <a class="dropdown-item" (click)="switchBranch(b)" *ngFor="let b of data.branches" [class.active]="b === data.current" >{{ b }}</a>
+        </div>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <span class="nav-link">
+          <i class="fa fa-spinner fa-spin" *ngIf="statusService.loading" title="Loading!"></i>
+          <i class="fa fa-check" *ngIf="statusService.saved" title="Saved!"></i>
+        </span>
+      </li>
+      <li class="nav-item dropdown" *ngIf="urlService.previewUrl && fileService.currentPath">
+        <a class="nav-link" [href]="urlService.previewUrl + fileService.currentPath" target="_preview">Preview</a>
+      </li>
+      <li class="nav-item dropdown" ngbDropdown  *ngIf="authService.loggedUser">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+          {{ authService.loggedUser.username }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
+          <a class="dropdown-item" (click)="logout()">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <waxe-messages></waxe-messages>
+  <router-outlet></router-outlet>
+  <ng-template ngbModalContainer></ng-template>
+</div>

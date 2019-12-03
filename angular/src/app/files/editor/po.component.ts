@@ -83,8 +83,6 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
 
 
   ngOnInit(): void {
-    this.socketService.initSocket();
-
     this.lockChangeSub = this.socketService.onLockChange().subscribe((lockData: any) => {
       if (!this.groupedEntries) {
         // We didn't get the entries from the API

@@ -10,11 +10,24 @@ const SERVER_URL = 'http://127.0.0.1:8000';
 @Injectable()
 export class SocketService {
   private socket;
+  public connected = false;
+  private started = false;
 
   private _lockObservable: Observable<any>;
 
   public initSocket(): void {
+    if (this.started) {
+      return;
+    }
+    this.started = true;
     this.socket = socketIo(SERVER_URL);
+    this.socket.on('disconnect', () => {
+      this.connected = false;
+    });
+    this.socket.on('connect', () => {
+      this.connected = true;
+
+    });
   }
 
   public enterRoom(room: string, previousRoom: string) {

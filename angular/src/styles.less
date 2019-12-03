@@ -224,3 +224,29 @@ waxe-file {
   margin-right: 15px;
   overflow: auto;
 }
+
+.waxe-overlay {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  z-index: 10000;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.waxe-locked {
+  position: relative;
+  .waxe-overlay {
+    display: block;
+
+    div {
+      color: white;
+      text-align: center;
+      position: absolute;
+      font-size: 2rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
