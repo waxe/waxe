@@ -106,7 +106,7 @@ def check_user(request, username, password):
             return None
         # TODO: we need to create a function for this in the conf
         uid = data[1]['uid'][0]
-        name = None
+        name = uid
         email = None
         if data[1].get('displayname'):
             name = data[1]['displayname'][0]
