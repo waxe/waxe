@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -37,13 +37,15 @@ import { SocketService } from '../socket.service';
             <div class="badge badge-info" *ngIf="entry.msgctxt">{{entry.msgctxt}}</div>
             <div [innerHTML]="entry.msgid"></div>
 
-            <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
-              *ngIf="!entry.showCKEditor" class="po-editor-div-translation" [class.disabled]="entry.isLocked"></div>
+            <div [class.entry-disabled]="entry.isLocked">
+              <span class="locked-by"><i class="fas fa-lock"></i> {{ entry.lockedBy }}</span>
+              <div [innerHTML]="entry.msgstr" (mouseenter)="entry.showCKEditor=true"
+                *ngIf="!entry.showCKEditor" class="po-editor-div-translation"></div>
 
-            <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
-              [disabled]="entry.isLocked" [class.disabled]="entry.isLocked"
-              [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"
-              (focus)="getLock(entry)" (blur)="releaseLock(entry)"></ckeditor>
+              <ckeditor *ngIf="entry.showCKEditor" [editor]="HTMLEditor" [config]="HTMLEditorConfig"
+                [disabled]="entry.isLocked" [(ngModel)]="entry.msgstr" (ngModelChange)="entryChange(entry)"
+                (focus)="getLock(entry)" (blur)="releaseLock(entry)"></ckeditor>
+            </div>
           </div>
         </div>
       </div>
@@ -53,6 +55,17 @@ import { SocketService } from '../socket.service';
 })
 export class FileEditorPoComponent implements OnDestroy, OnInit {
   @ViewChild('poEditorContainer') poEditorContainer;
+  @HostListener('window:beforeunload')
+  quitPage() {
+    // When closing the page be sure to release the lock and leave the room
+    if (this.currentEntry) {
+      this.releaseLock(this.currentEntry);
+    }
+
+    if (this.path) {
+     this.socketService.leaveRoom(this.path).subscribe();
+    }
+  }
 
   HTMLEditor = InlineEditor;
   HTMLEditorConfig = {
@@ -67,8 +80,12 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
   iframeUrl = null;
   loading = false;
 
+  private currentEntry = null;
+  private stackLockData = [];
+
   private routeSub: Subscription;
   private textChangedSub: Subscription;
+  private connectSub: Subscription;
   private lockChangeSub: Subscription;
   private objChangeSub: Subscription;
 
@@ -79,19 +96,21 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
     private messagesService: MessagesServive,
     private socketService: SocketService,
     private statusService: StatusService,
-  ) {}
+  ){}
 
 
   ngOnInit(): void {
     this.lockChangeSub = this.socketService.onLockChange().subscribe((lockData: any) => {
       if (!this.groupedEntries) {
         // We didn't get the entries from the API
+        // TODO: also use stackLockData to be sure the interface is up to date?
         return;
       }
       this.groupedEntries.map((dict: any) => {
         dict.entries.map((entry) => {
           if (entry.id === lockData.id) {
             entry.isLocked = lockData.status;
+            entry.lockedBy = lockData.username;
             return;
           }
         });
@@ -102,7 +121,8 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
       // TODO: we should use the same subscription for onLockChange &
       // onObjectChange and merge the object properly
       if (!this.groupedEntries) {
-        // We didn't get the entries from the API
+        // We didn't get the entries from the API so the store the entry data to apply the change after the loading.
+        this.stackLockData.push(entryData);
         return;
       }
       this.groupedEntries.map((dict: any) => {
@@ -116,6 +136,11 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
       });
     });
 
+    this.connectSub = this.socketService.onConnect().subscribe(() => {
+      // TODO: Reload properly the entries
+      window.location.reload();
+    });
+
     this.routeSub = combineLatest(this.route.queryParams, this.route.fragment).pipe(
       switchMap(([params, fragment]) => {
         this.loading = true;
@@ -124,11 +149,27 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
         this.path = params['path'];
 
         return this.socketService.enterRoom(this.path, previousPath).pipe(
-          switchMap(() => this.fileService.getPo(this.path))
+          switchMap(() => {
+            // this.sleep(10000);
+            return this.fileService.getPo(this.path);
+          })
         );
       })
     )
     .subscribe((groupedEntries: Array<any>) => {
+      if (this.stackLockData.length) {
+        this.stackLockData.map((ent) => {
+          groupedEntries.map((dict) => {
+            dict.entries.map((entry) => {
+              if(entry.id === ent.id) {
+                // TODO: we should merge the entry
+                entry.msgstr = ent.msgstr;
+              }
+            });
+          });
+        });
+      }
+      this.stackLockData = [];
 
       this.groupedEntries = groupedEntries;
       if (this.groupedEntries.length) {
@@ -176,22 +217,34 @@ export class FileEditorPoComponent implements OnDestroy, OnInit {
   }
 
   getLock(entry: any) {
-    this.socketService.getLock(this.path, entry.id).subscribe((v) => {
+    this.socketService.acquireLock(this.path, entry.id).subscribe((v) => {
       entry.isLocked = !v;
+      this.currentEntry = entry;
     });
   }
 
   releaseLock(entry: any) {
     this.socketService.releaseLock(this.path, entry.id).subscribe((v) => {
       entry.isLocked = !v;
+      this.currentEntry = null;
     });
   }
 
   ngOnDestroy() {
     this.routeSub.unsubscribe();
     this.textChangedSub.unsubscribe();
+    this.connectSub.unsubscribe();
     this.lockChangeSub.unsubscribe();
     this.objChangeSub.unsubscribe();
     this.socketService.leaveRoom(this.path).subscribe();
+  }
+
+  sleep(milliseconds) {
+    // To be removed use for debugging purpose
+    const date = Date.now();
+    let currentDate = null;
+    do {
+    currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
   }
 }

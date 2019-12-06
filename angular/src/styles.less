@@ -213,9 +213,20 @@ waxe-file {
     padding: 15px;
   }
 
-  .po-editor-div-translation.disabled,
-  ckeditor.disabled > div {
-    background: red;
+  .locked-by {
+    display: none;
+  }
+
+  .entry-disabled {
+    position: relative;
+    background-color: rgba(0,0,0,0.6);
+    .locked-by {
+      display: block;
+      color: white;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
   }
 }
 

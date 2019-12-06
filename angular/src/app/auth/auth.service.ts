@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { UrlService } from '../url.service';
+import { SocketService } from '../files/socket.service';
 
 
 
@@ -20,14 +21,19 @@ export class AuthService {
 
   loggedUser = null;
 
-  constructor(private http: HttpClient, private urlService: UrlService) {}
+  constructor(private http: HttpClient, private socketService: SocketService, private urlService: UrlService) {}
 
   login(username, password): Observable<any> {
     return this.http
       .post(this.urlService.API_URLS.auth.login, {username, password})
       .pipe(
-        tap(res => this.loggedUser = res as LoggedUser)
+        tap(res => this.setUser(res as LoggedUser))
       );
+  }
+
+  setUser(user) {
+    this.loggedUser = user;
+    this.socketService.setSession(user);
   }
 
   logout(): Observable<any> {
@@ -40,7 +46,7 @@ export class AuthService {
 
   getLogin(): Observable<any> {
     return this.http.get(this.urlService.API_URLS.auth.login).pipe(
-      tap(res => this.loggedUser = res as LoggedUser)
+      tap(res => this.setUser(res as LoggedUser))
     );
   }
 

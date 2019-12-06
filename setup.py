@@ -22,6 +22,9 @@ requires = [
     'bcrypt',
     'paste',
     'polib',
+    'python-socketio',
+    'gevent==1.2.2',
+    'uwsgi',
     ]
 
 tests_require = [

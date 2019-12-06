@@ -21,13 +21,25 @@ export class SocketService {
     }
     this.started = true;
     this.socket = socketIo(SERVER_URL);
+
     this.socket.on('disconnect', () => {
       this.connected = false;
     });
     this.socket.on('connect', () => {
       this.connected = true;
-
     });
+  }
+
+  public onConnect() {
+    return new Observable(observer => {
+      this.socket.on('connect', (dict) => {
+        observer.next(dict);
+      });
+    });
+  }
+
+  public setSession(user) {
+    this.socket.emit('set_session', user.username);
   }
 
   public enterRoom(room: string, previousRoom: string) {
@@ -35,7 +47,6 @@ export class SocketService {
       this.socket.emit('enter_room', room, previousRoom, (status) => {
         observer.next(status);
         observer.complete();
-
       });
     });
   }
@@ -49,9 +60,9 @@ export class SocketService {
     });
   }
 
-  public getLock(room: string, id: string) {
+  public acquireLock(room: string, id: string) {
     return new Observable(observer => {
-      this.socket.emit('get_lock', room, id, (status) => {
+      this.socket.emit('acquire_lock', room, id, (status) => {
         observer.next(status);
         observer.complete();
       });
@@ -76,7 +87,7 @@ export class SocketService {
   }
 
   public objectChange(room: string, obj: any) {
-    this.socket.emit('obj_change', room, obj);
+    this.socket.emit('object_change', room, obj);
   }
 
   public onObjectChange() {
