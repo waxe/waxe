@@ -105,8 +105,12 @@ def check_user(request, username, password):
             return None
         # TODO: we need to create a function for this in the conf
         uid = data[1]['uid'][0]
-        name = data[1]['displayname'][0]
-        email = data[1]['maillocaladdress'][0]
+        name = None
+        email = None
+        if data[1].get('displayname'):
+            name = data[1]['displayname'][0]
+        if data[1].get('maillocaladdress'):
+            email = data[1]['maillocaladdress'][0]
 
         user = request.dbsession.query(User).filter_by(
             login=uid).one_or_none()
