@@ -22,6 +22,7 @@ class RootFactory(object):
         (Allow, Authenticated, 'authenticated'),
         (Allow, 'role:edit', ['edit']),
         (Allow, 'cn=waxe_admin,ou=waxe_groups,dc=a9english,dc=com', ['edit']),
+        (Allow, 'cn=guapo_editor,ou=waxe_groups,dc=a9english,dc=com', ['edit']),
     ]
 
     def __init__(self, request):
