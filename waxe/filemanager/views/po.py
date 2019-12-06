@@ -1,10 +1,13 @@
 import base64
+from contextlib import contextmanager
 import json
 import hashlib
 import os
 from paste.util.import_string import eval_import
 import polib
 import re
+import shutil
+import time
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 
@@ -23,6 +26,18 @@ def get_unique_id(entry):
 
     key = u'%s%s%s' % (entry.msgctxt, CONTEXT_SEPARATOR, entry.msgid)
     return to_hash(key)
+
+
+@contextmanager
+def try_make_file(filename, attemps=5):
+    for i in range(attemps):
+        try:
+            yield os.open(filename,  os.O_CREAT | os.O_EXCL)
+            return
+        except OSError:
+            time.sleep(0.2)
+
+    yield None
 
 
 class PoGetFileView(BaseGetView):
@@ -70,15 +85,22 @@ class PoPostFileView(BasePostView):
             raise exc.HTTPNotFound()
 
         posted_entry = self.request.json_body.get('entry')
-        po = polib.pofile(self.abspath)
-        for entry in po:
-            if get_unique_id(entry) == posted_entry['id']:
-                entry.msgstr = posted_entry['msgstr']
-                break
-        # TODO: raise exception if entry no found
-        po.save(self.abspath)
-        mo_abspath = os.path.splitext(self.abspath)[0] + '.mo'
-        po.save_as_mofile(mo_abspath)
+
+        new_file = self.abspath + '.new'
+        with try_make_file(new_file) as f:
+            if not f:
+                raise exc.HTTPBadRequest()
+            po = polib.pofile(self.abspath)
+            for entry in po:
+                if get_unique_id(entry) == posted_entry['id']:
+                    entry.msgstr = posted_entry['msgstr']
+                    break
+            # TODO: raise exception if entry not found
+            po.save(new_file)
+            shutil.move(new_file, self.abspath)
+            mo_abspath = os.path.splitext(self.abspath)[0] + '.mo'
+            po.save_as_mofile(mo_abspath)
+
         return {}
 
 
