@@ -96,8 +96,8 @@ class PoPostFileView(BasePostView):
                     entry.msgstr = posted_entry['msgstr']
                     break
             # TODO: raise exception if entry not found
-            po.save(new_file)
             shutil.move(new_file, self.abspath)
+            po.save(self.abspath)
             mo_abspath = os.path.splitext(self.abspath)[0] + '.mo'
             po.save_as_mofile(mo_abspath)
 
